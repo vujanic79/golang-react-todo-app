@@ -1,14 +1,15 @@
-package todo
+package db
 
 import (
 	"github.com/google/uuid"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
 	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
+	"slices"
 	"time"
 )
 
-func generateDbUser(firstName string, lastName string, email string) database.User {
-	return database.User{
+func generateDbUser(firstName string, lastName string, email string) database.AppUser {
+	return database.AppUser{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
@@ -18,7 +19,7 @@ func generateDbUser(firstName string, lastName string, email string) database.Us
 	}
 }
 
-func generateUser(dbUser database.User) domain.User {
+func generateUser(dbUser database.AppUser) domain.User {
 	return domain.User{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
@@ -90,10 +91,22 @@ func checkTaskEquality(want domain.Task, task domain.Task) bool {
 		want.UserID == want.UserID
 }
 
+func checkTasksEquality(want []domain.Task, tasks []domain.Task) bool {
+	return slices.Equal(want, tasks)
+}
+
 func generateTaskStatuses(dbStatuses []string) []domain.TaskStatus {
 	taskStatuses := make([]domain.TaskStatus, len(dbStatuses))
 	for index, dbStatus := range dbStatuses {
 		taskStatuses[index] = domain.TaskStatus{Status: dbStatus}
 	}
 	return taskStatuses
+}
+
+func checkTaskStatusEquality(want domain.TaskStatus, taskStatus domain.TaskStatus) bool {
+	return want.Status == taskStatus.Status
+}
+
+func checkTaskStatusesEquality(want []domain.TaskStatus, taskStatuses []domain.TaskStatus) bool {
+	return slices.Equal(want, taskStatuses)
 }

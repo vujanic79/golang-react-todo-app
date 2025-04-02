@@ -17,7 +17,7 @@ type TaskRepository struct {
 var _ domain.TaskRepository = (*TaskRepository)(nil)
 
 func NewTaskRepository(db *database.Queries) *TaskRepository {
-	return &TaskRepository{Db: db}
+	return &TaskRepository{Db: db, Ctx: context.Background()}
 }
 
 func (pDb *TaskRepository) SetContext(ctx context.Context) {

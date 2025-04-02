@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func GetDbConnection() (dbQueries *database.Queries) {
+func GetPostgreSQLConnection() (dbQueries *database.Queries) {
 	dbUrl := os.Getenv("DB_URL")
 	db, err := sql.Open("postgres", dbUrl)
 	if err != nil {

@@ -34,7 +34,7 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	dbQueries := db.GetDbConnection()
+	dbQueries := db.GetPostgreSQLConnection()
 	data.LoadDataToDatabase(dbQueries, "../../pkg/db/data/task_statuses.csv")
 
 	userRepository := db.NewUserRepository(dbQueries)
