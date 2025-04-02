@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
 	"slices"
 	"testing"
 )
@@ -9,7 +10,7 @@ func TestMapDbUserToUser(t *testing.T) {
 	dbUser := generateDbUser("John", "Doe", "john.doe@gmail.com")
 	want := generateUser(dbUser)
 
-	user := MapDbUserToUser(dbUser)
+	user := domain.MapDbUserToUser(dbUser)
 	areEqual := checkUserEquality(want, user)
 
 	if !areEqual {
@@ -21,7 +22,7 @@ func TestMapDbTaskToTask(t *testing.T) {
 	dbTask := generateDbTask("Task 1", "Task 1 description", "ACTIVE")
 	want := generateTask(dbTask)
 
-	task := MapDbTaskToTask(dbTask)
+	task := domain.MapDbTaskToTask(dbTask)
 	areEqual := checkTaskEquality(want, task)
 
 	if !areEqual {
@@ -33,7 +34,7 @@ func TestMapDbTasksToTasks(t *testing.T) {
 	dbTasks := generateDbTasks()
 	want := generateTasks(dbTasks)
 
-	tasks := MapDbTasksToTasks(dbTasks)
+	tasks := domain.MapDbTasksToTasks(dbTasks)
 	areEqual := slices.Equal(want, tasks)
 
 	if !areEqual {
@@ -43,9 +44,9 @@ func TestMapDbTasksToTasks(t *testing.T) {
 
 func TestMapDbTaskStatusToTaskStatus(t *testing.T) {
 	status := "PENDING"
-	want := TaskStatus{Status: status}
+	want := domain.TaskStatus{Status: status}
 
-	taskStatus := MapDbTaskStatusToTaskStatus(status)
+	taskStatus := domain.MapDbTaskStatusToTaskStatus(status)
 	if taskStatus.Status != want.Status {
 		t.Errorf("MapDbTaskStatusToTaskStatus(dbTaskStatus) = %v, want %v", taskStatus.Status, want.Status)
 	}
@@ -55,7 +56,7 @@ func TestMapDbTaskStatusesToTaskStatuses(t *testing.T) {
 	dbStatuses := []string{"PENDING", "ACTIVE", "COMPLETED"}
 	want := generateTaskStatuses(dbStatuses)
 
-	taskStatuses := MapDbTaskStatusesToTaskStatuses(dbStatuses)
+	taskStatuses := domain.MapDbTaskStatusesToTaskStatuses(dbStatuses)
 	areEqual := slices.Equal(want, taskStatuses)
 
 	if !areEqual {

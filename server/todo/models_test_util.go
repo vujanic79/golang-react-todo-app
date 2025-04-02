@@ -2,7 +2,8 @@ package todo
 
 import (
 	"github.com/google/uuid"
-	"github.com/vujanic79/golang-react-todo-app/internal/database"
+	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
+	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
 	"time"
 )
 
@@ -17,8 +18,8 @@ func generateDbUser(firstName string, lastName string, email string) database.Us
 	}
 }
 
-func generateUser(dbUser database.User) User {
-	return User{
+func generateUser(dbUser database.User) domain.User {
+	return domain.User{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
@@ -28,7 +29,7 @@ func generateUser(dbUser database.User) User {
 	}
 }
 
-func checkUserEquality(want User, user User) bool {
+func checkUserEquality(want domain.User, user domain.User) bool {
 	return want.ID == user.ID &&
 		want.CreatedAt == user.CreatedAt &&
 		want.UpdatedAt == user.UpdatedAt &&
@@ -50,8 +51,8 @@ func generateDbTask(title string, description string, status string) database.Ta
 	}
 }
 
-func generateTask(dbTask database.Task) Task {
-	return Task{
+func generateTask(dbTask database.Task) domain.Task {
+	return domain.Task{
 		ID:               dbTask.ID,
 		CreatedAt:        dbTask.CreatedAt,
 		UpdatedAt:        dbTask.UpdatedAt,
@@ -70,15 +71,15 @@ func generateDbTasks() []database.Task {
 	}
 }
 
-func generateTasks(dbTasks []database.Task) []Task {
-	tasks := make([]Task, len(dbTasks))
+func generateTasks(dbTasks []database.Task) []domain.Task {
+	tasks := make([]domain.Task, len(dbTasks))
 	for index, dbTask := range dbTasks {
 		tasks[index] = generateTask(dbTask)
 	}
 	return tasks
 }
 
-func checkTaskEquality(want Task, task Task) bool {
+func checkTaskEquality(want domain.Task, task domain.Task) bool {
 	return want.ID == want.ID &&
 		want.CreatedAt == task.CreatedAt &&
 		want.UpdatedAt == task.UpdatedAt &&
@@ -89,10 +90,10 @@ func checkTaskEquality(want Task, task Task) bool {
 		want.UserID == want.UserID
 }
 
-func generateTaskStatuses(dbStatuses []string) []TaskStatus {
-	taskStatuses := make([]TaskStatus, len(dbStatuses))
+func generateTaskStatuses(dbStatuses []string) []domain.TaskStatus {
+	taskStatuses := make([]domain.TaskStatus, len(dbStatuses))
 	for index, dbStatus := range dbStatuses {
-		taskStatuses[index] = TaskStatus{Status: dbStatus}
+		taskStatuses[index] = domain.TaskStatus{Status: dbStatus}
 	}
 	return taskStatuses
 }
