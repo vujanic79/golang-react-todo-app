@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+      target: ${GO_ENV}
     container_name: golang-react-todo-app
     env_file:
       - ./.env
