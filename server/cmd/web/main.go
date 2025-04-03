@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/joho/godotenv"
 	"github.com/vujanic79/golang-react-todo-app/pkg/app"
 	"github.com/vujanic79/golang-react-todo-app/pkg/db"
 	"github.com/vujanic79/golang-react-todo-app/pkg/db/data"
@@ -14,11 +13,6 @@ import (
 )
 
 func main() {
-	err := godotenv.Load("../../.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	portString := os.Getenv("PORT")
 	if portString == "" {
 		log.Fatal("PORT must be set")
@@ -35,7 +29,7 @@ func main() {
 	}))
 
 	dbQueries := db.GetPostgreSQLConnection()
-	data.LoadDataToDatabase(dbQueries, "../../pkg/db/data/task_statuses.csv")
+	data.LoadDataToDatabase(dbQueries, "./pkg/db/data/task_statuses.csv")
 
 	userRepository := db.NewUserRepository(dbQueries)
 	taskRepository := db.NewTaskRepository(dbQueries)
@@ -66,7 +60,7 @@ func main() {
 		Addr:    ":" + portString,
 	}
 
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Fatal("Server failed to start", err.Error())
 	}
