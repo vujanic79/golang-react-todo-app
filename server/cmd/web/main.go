@@ -7,15 +7,20 @@ import (
 	"github.com/vujanic79/golang-react-todo-app/pkg/db"
 	"github.com/vujanic79/golang-react-todo-app/pkg/db/data"
 	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest"
+	"github.com/vujanic79/golang-react-todo-app/pkg/logging"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 )
 
 func main() {
+	logging.LoggerSetup()
+
 	portString := os.Getenv("PORT")
 	if portString == "" {
-		log.Fatal("PORT must be set")
+		slog.Error("PORT must be set")
+		os.Exit(1)
 	}
 
 	router := chi.NewRouter()

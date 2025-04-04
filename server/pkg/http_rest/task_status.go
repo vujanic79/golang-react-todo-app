@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
 	"log"
+	"log/slog"
 	"net/http"
 )
 
@@ -57,8 +58,12 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 
 	taskStatus, err := tsc.TaskStatusService.GetTaskStatusByStatus(taskStatusParam)
 	if err != nil {
-		log.Printf("Error getting task status: %s", err.Error())
+		slog.LogAttrs(r.Context(), slog.LevelError, err.Error(),
+			slog.Group("requestData", slog.String("url", r.URL.String()),
+				slog.String("method", r.Method), slog.String("url_param", taskStatusParam)))
 		RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
+
+		slog.GroupValue()
 		return
 	}
 
