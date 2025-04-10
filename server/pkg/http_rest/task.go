@@ -1,6 +1,7 @@
 package http_rest
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
@@ -25,7 +26,6 @@ func (tc *TaskController) CreateTask(
 	w http.ResponseWriter,
 	r *http.Request) {
 	tc.TaskService.SetContext(r.Context())
-	tc.UserService.SetContext(r.Context())
 	decoder := json.NewDecoder(r.Body)
 	var createTaskParams domain.CreateTaskParams
 	err := decoder.Decode(&createTaskParams)
@@ -35,7 +35,7 @@ func (tc *TaskController) CreateTask(
 		return
 	}
 
-	userId, err := tc.UserService.GetUserIdByEmail(createTaskParams.UserEmail)
+	userId, err := tc.UserService.GetUserIdByEmail(context.Background(), createTaskParams.UserEmail)
 	if err != nil {
 		log.Printf("Error getting user id: %s", err.Error())
 		RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
