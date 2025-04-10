@@ -28,7 +28,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 	// [*] START: Reading r.Body data, and restoring it for further usage
 	rBodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body")
+		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
@@ -37,7 +37,6 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 	r.Body = reader
 	// [*] END
 
-	tsc.TaskStatusService.SetContext(r.Context())
 	decoder := json.NewDecoder(r.Body)
 	var decodedParams domain.CreateTaskStatusParams
 	err = decoder.Decode(&decodedParams)
@@ -45,8 +44,8 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("request_body", string(rBodyBytes)). // Raw string - not possible to parse into JSON
-			Msg("Creating task status")
+			Str("request_body", string(rBodyBytes)). // Raw string
+			Msg("Creating task status error")
 		RespondWithError(w, http.StatusBadRequest, "Error parsing task status data from the body")
 		return
 	}
@@ -71,13 +70,17 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 
 func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	tsc.TaskStatusService.SetContext(r.Context())
-	taskStatuses, err := tsc.TaskStatusService.GetTaskStatuses()
-	if err != nil {
-		l.Error().Stack().Err(err).
+	// [*] START - Add http request data to context
+	l = l.With().
+		Dict("http_rest.GetTaskStatuses_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			Msg("Getting task statuses")
+			Str("method", r.Method)).
+		Logger()
+	ctx := logger.WithLogger(r.Context(), l)
+	// [*] END
+
+	taskStatuses, err := tsc.TaskStatusService.GetTaskStatuses(ctx)
+	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error getting task statuses")
 		return
 	}
@@ -87,16 +90,20 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 
 func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	tsc.TaskStatusService.SetContext(r.Context())
 	taskStatusParam := chi.URLParam(r, "taskStatus")
 
-	taskStatus, err := tsc.TaskStatusService.GetTaskStatusByStatus(taskStatusParam)
-	if err != nil {
-		l.Error().Stack().Err(errors.WithStack(err)).
+	// [*] START - Add http request data to context
+	l = l.With().
+		Dict("http_rest.CreateTaskStatusByStatus_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("request_param", taskStatusParam).
-			Msg("Getting task status")
+			Str("urlParam", taskStatusParam)).
+		Logger()
+	ctx := logger.WithLogger(r.Context(), l)
+	// [*] END
+
+	taskStatus, err := tsc.TaskStatusService.GetTaskStatusByStatus(ctx, taskStatusParam)
+	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
 		return
 	}

@@ -33,6 +33,8 @@ func Get() zerolog.Logger {
 			FormatTimestamp: func(i interface{}) string {
 				return fmt.Sprintf("[%s]", i)
 			},
+			FormatErrFieldName:  func(i interface{}) string { return fmt.Sprintf("*** %s=", i) },
+			FormatErrFieldValue: func(i interface{}) string { return fmt.Sprintf("%s ***", i) },
 		}
 
 		log = zerolog.New(output).

@@ -9,25 +9,19 @@ import (
 
 type TaskStatusService struct {
 	TaskStatusRepository domain.TaskStatusRepository
-	Ctx                  context.Context
 }
 
 var _ domain.TaskStatusService = (*TaskStatusService)(nil)
 
 func NewTaskStatusService(taskStatusRepository domain.TaskStatusRepository) *TaskStatusService {
-	return &TaskStatusService{TaskStatusRepository: taskStatusRepository, Ctx: context.Background()}
-}
-
-func (tss *TaskStatusService) SetContext(ctx context.Context) {
-	tss.Ctx = ctx
+	return &TaskStatusService{TaskStatusRepository: taskStatusRepository}
 }
 
 func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
-	tss.TaskStatusRepository.SetContext(tss.Ctx)
-	// [*] START - Add service data to context
 	l := logger.FromContext(ctx)
+	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.TaskStatusService_params", zerolog.Dict().
+		Dict("app.CreateTaskStatus_params", zerolog.Dict().
 			Str("taskStatusStr", taskStatusStr)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
@@ -36,14 +30,27 @@ func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, taskStatusSt
 	return taskStatus, err
 }
 
-func (tss *TaskStatusService) GetTaskStatuses() (taskStatuses []domain.TaskStatus, err error) {
-	tss.TaskStatusRepository.SetContext(tss.Ctx)
-	taskStatuses, err = tss.TaskStatusRepository.GetTaskStatuses()
+func (tss *TaskStatusService) GetTaskStatuses(ctx context.Context) (taskStatuses []domain.TaskStatus, err error) {
+	l := logger.FromContext(ctx)
+	// [*] START - Add service data to context
+	l = l.With().
+		Dict("app.GetTaskStatusByStatus_params", zerolog.Dict()).
+		Logger()
+	ctx = logger.WithLogger(ctx, l)
+	// [*] END
+	taskStatuses, err = tss.TaskStatusRepository.GetTaskStatuses(ctx)
 	return taskStatuses, err
 }
 
-func (tss *TaskStatusService) GetTaskStatusByStatus(taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
-	tss.TaskStatusRepository.SetContext(tss.Ctx)
-	taskStatus, err = tss.TaskStatusRepository.GetTaskStatusByStatus(taskStatusStr)
+func (tss *TaskStatusService) GetTaskStatusByStatus(ctx context.Context, taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
+	l := logger.FromContext(ctx)
+	// [*] START - Add service data to context
+	l = l.With().
+		Dict("app.GetTaskStatusByStatus_params", zerolog.Dict().
+			Str("taskStatusStr", taskStatusStr)).
+		Logger()
+	ctx = logger.WithLogger(ctx, l)
+	// [*] END
+	taskStatus, err = tss.TaskStatusRepository.GetTaskStatusByStatus(ctx, taskStatusStr)
 	return taskStatus, err
 }
