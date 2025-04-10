@@ -1,11 +1,14 @@
 package http_rest
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/go-chi/chi"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
-	"log"
-	"log/slog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
+	"io"
 	"net/http"
 )
 
@@ -20,19 +23,45 @@ func NewTaskStatusController(taskStatusService domain.TaskStatusService) *TaskSt
 }
 
 func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http.Request) {
+	l := logger.Get()
+
+	// [*] START: Reading r.Body data, and restoring it for further usage
+	rBodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body")
+		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		return
+	}
+
+	reader := io.NopCloser(bytes.NewBuffer(rBodyBytes))
+	r.Body = reader
+	// [*] END
+
 	tsc.TaskStatusService.SetContext(r.Context())
 	decoder := json.NewDecoder(r.Body)
 	var decodedParams domain.CreateTaskStatusParams
-	err := decoder.Decode(&decodedParams)
+	err = decoder.Decode(&decodedParams)
 	if err != nil {
-		log.Printf("Error parsing task status data from the body: %s", err.Error())
+		l.Error().Stack().Err(errors.WithStack(err)).
+			Str("url", r.URL.RequestURI()).
+			Str("method", r.Method).
+			Str("request_body", string(rBodyBytes)). // Raw string - not possible to parse into JSON
+			Msg("Creating task status")
 		RespondWithError(w, http.StatusBadRequest, "Error parsing task status data from the body")
 		return
 	}
 
-	taskStatus, err := tsc.TaskStatusService.CreateTaskStatus(decodedParams.Status)
+	// [*] START - Add http request data to context
+	l = l.With().
+		Dict("http_rest.CreateTaskStatus_params", zerolog.Dict().
+			Str("url", r.URL.RequestURI()).
+			Str("method", r.Method).
+			RawJSON("request_body", rBodyBytes)).
+		Logger()
+	ctx := logger.WithLogger(r.Context(), l)
+	// [*] END
+	taskStatus, err := tsc.TaskStatusService.CreateTaskStatus(ctx, decodedParams.Status)
 	if err != nil {
-		log.Printf("Error creating task status: %s", err.Error())
 		RespondWithError(w, http.StatusInternalServerError, "Error creating task status")
 		return
 	}
@@ -41,10 +70,14 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 }
 
 func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.Request) {
+	l := logger.Get()
 	tsc.TaskStatusService.SetContext(r.Context())
 	taskStatuses, err := tsc.TaskStatusService.GetTaskStatuses()
 	if err != nil {
-		log.Printf("Error getting task statuses: %s", err.Error())
+		l.Error().Stack().Err(err).
+			Str("url", r.URL.RequestURI()).
+			Str("method", r.Method).
+			Msg("Getting task statuses")
 		RespondWithError(w, http.StatusInternalServerError, "Error getting task statuses")
 		return
 	}
@@ -53,17 +86,18 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 }
 
 func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r *http.Request) {
+	l := logger.Get()
 	tsc.TaskStatusService.SetContext(r.Context())
 	taskStatusParam := chi.URLParam(r, "taskStatus")
 
 	taskStatus, err := tsc.TaskStatusService.GetTaskStatusByStatus(taskStatusParam)
 	if err != nil {
-		slog.LogAttrs(r.Context(), slog.LevelError, err.Error(),
-			slog.Group("requestData", slog.String("url", r.URL.String()),
-				slog.String("method", r.Method), slog.String("url_param", taskStatusParam)))
+		l.Error().Stack().Err(errors.WithStack(err)).
+			Str("url", r.URL.RequestURI()).
+			Str("method", r.Method).
+			Str("request_param", taskStatusParam).
+			Msg("Getting task status")
 		RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
-
-		slog.GroupValue()
 		return
 	}
 

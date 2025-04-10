@@ -2,8 +2,11 @@ package db
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
 	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
+	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 )
 
 type TaskStatusRepository struct {
@@ -21,8 +24,15 @@ func (tsr *TaskStatusRepository) SetContext(ctx context.Context) {
 	tsr.Ctx = ctx
 }
 
-func (tsr *TaskStatusRepository) CreateTaskStatus(taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
+func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
+	l := logger.FromContext(ctx)
 	dbTaskStatus, err := tsr.Db.CreateTaskStatus(tsr.Ctx, taskStatusStr)
+	if err != nil {
+		l.Error().Stack().Err(errors.WithStack(err)).
+			Dict("db.CreateTaskStatus_params", zerolog.Dict().
+				Str("taskStatusStr", taskStatusStr)).
+			Msg("Getting task statuses from database")
+	}
 	return domain.TaskStatus{Status: dbTaskStatus}, err
 }
 
