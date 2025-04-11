@@ -17,8 +17,8 @@ type UserController struct {
 	UserService domain.UserService
 }
 
-func NewUserController(userService domain.UserService) *UserController {
-	return &UserController{UserService: userService}
+func NewUserController(userService domain.UserService) UserController {
+	return UserController{UserService: userService}
 }
 
 func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {

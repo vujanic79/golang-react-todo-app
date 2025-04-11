@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 	"net/http"
 	"time"
 )
@@ -19,22 +20,40 @@ type Task struct {
 }
 
 type CreateTaskParams struct {
-	ID               uuid.UUID
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	Title            string
-	Description      string
-	Status           string
-	CompleteDeadline string
-	UserEmail        string
+	ID               uuid.UUID `json:"id"`
+	CreatedAt        time.Time `json:"createdAt"`
+	UpdatedAt        time.Time `json:"updatedAt"`
+	Title            string    `json:"title"`
+	Description      string    `json:"description"`
+	Status           string    `json:"status"`
+	CompleteDeadline string    `json:"completeDeadline"`
+	UserEmail        string    `json:"userEmail"`
+}
+
+func (ctp CreateTaskParams) MarshalZerologObject(event *zerolog.Event) {
+	event.
+		Str("title", ctp.Title).
+		Str("description", ctp.Description).
+		Str("status", ctp.Status).
+		Str("completeDeadline", ctp.CompleteDeadline).
+		Str("userEmail", ctp.UserEmail)
 }
 
 type UpdateTaskParams struct {
-	ID               uuid.UUID
-	Title            string
-	Description      string
-	Status           string
-	CompleteDeadline string
+	ID               uuid.UUID `json:"id"`
+	Title            string    `json:"title"`
+	Description      string    `json:"description"`
+	Status           string    `json:"status"`
+	CompleteDeadline string    `json:"completeDeadline"`
+}
+
+func (utp UpdateTaskParams) MarshalZerologObject(event *zerolog.Event) {
+	event.
+		Interface("id", utp.ID).
+		Str("title", utp.Title).
+		Str("description", utp.Description).
+		Str("status", utp.Status).
+		Str("completeDeadline", utp.CompleteDeadline)
 }
 
 type GetTasksByUserIdParams struct {
@@ -42,19 +61,17 @@ type GetTasksByUserIdParams struct {
 }
 
 type TaskService interface {
-	CreateTask(userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
-	DeleteTask(id uuid.UUID) (err error)
-	UpdateTask(updateTaskParams UpdateTaskParams) (dbTask Task, err error)
-	GetTasksByUserId(userID uuid.UUID) (dbTasks []Task, err error)
-	SetContext(ctx context.Context)
+	CreateTask(ctx context.Context, userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
+	DeleteTask(ctx context.Context, id uuid.UUID) (err error)
+	UpdateTask(ctx context.Context, updateTaskParams UpdateTaskParams) (dbTask Task, err error)
+	GetTasksByUserId(ctx context.Context, userID uuid.UUID) (dbTasks []Task, err error)
 }
 
 type TaskRepository interface {
-	CreateTask(userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
-	DeleteTask(id uuid.UUID) (err error)
-	UpdateTask(updateTaskParams UpdateTaskParams) (dbTask Task, err error)
-	GetTasksByUserId(userID uuid.UUID) (dbTasks []Task, err error)
-	SetContext(ctx context.Context)
+	CreateTask(ctx context.Context, userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
+	DeleteTask(ctx context.Context, id uuid.UUID) (err error)
+	UpdateTask(ctx context.Context, updateTaskParams UpdateTaskParams) (dbTask Task, err error)
+	GetTasksByUserId(ctx context.Context, userID uuid.UUID) (dbTasks []Task, err error)
 }
 
 type TaskController interface {

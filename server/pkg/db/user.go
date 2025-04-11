@@ -35,7 +35,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, createUserParams domai
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.CreateUser_params", zerolog.Dict().
-				Object("create_user_params", createUserParams)).
+				Object("createUserParams", createUserParams)).
 			Msg("Creating user error")
 	}
 	// [*] END

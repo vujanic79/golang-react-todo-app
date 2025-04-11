@@ -21,7 +21,7 @@ func GetPostgreSQLConnection() (dbQueries *database.Queries) {
 
 	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", dbDriver, dbUser, dbPassword, dbHost, dbPort, dbName, dbSslMode)
 	db, err := sql.Open("postgres", dbUrl)
-	if err == nil {
+	if err != nil {
 		slog.LogAttrs(context.Background(), slog.LevelError, "Failed to connect to database",
 			slog.Group("connectionParams",
 				slog.String("driver", dbDriver), slog.String("host", dbHost), slog.String("port", dbPort),

@@ -18,8 +18,8 @@ type TaskStatusController struct {
 
 var _ domain.TaskStatusController = (*TaskStatusController)(nil)
 
-func NewTaskStatusController(taskStatusService domain.TaskStatusService) *TaskStatusController {
-	return &TaskStatusController{TaskStatusService: taskStatusService}
+func NewTaskStatusController(taskStatusService domain.TaskStatusService) TaskStatusController {
+	return TaskStatusController{TaskStatusService: taskStatusService}
 }
 
 func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http.Request) {
