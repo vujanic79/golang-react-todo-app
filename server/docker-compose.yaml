@@ -4,9 +4,6 @@ services:
       context: .
       target: ${APP_ENV}
     container_name: golang-react-todo-app
-    ports:
-      - "8000:8000"
-      - "40000:40000"
     env_file:
       - ./.env
     environment:
@@ -15,11 +12,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: ${DB_USER}
-    security_opt:
-      - "seccomp:unconfined"
-    cap_add:
-      - SYS_PTRACE
-    command: /go/bin/dlv --headless --listen=:40000 --api-version=2 exec /build/cmd/web/bin/golang-react-todo-app
+    ports:
+      - "8000:8000"
     depends_on:
       goose:
         condition: service_completed_successfully

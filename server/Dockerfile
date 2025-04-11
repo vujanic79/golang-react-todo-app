@@ -10,14 +10,13 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
-
 COPY . .
 
-RUN cd cmd/web && go build -gcflags="all=-N -l" -o bin/golang-react-todo-app
+RUN cd cmd/web && go build -o bin/golang-react-todo-app
 
-CMD ["/go/bin/dlv", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/build/cmd/web/bin/golang-react-todo-app"]
-#CMD ["/build/cmd/web/bin/golang-react-todo-app"]
+EXPOSE 8000
+
+CMD ["/build/cmd/web/bin/golang-react-todo-app"]
 
 # Builder for production
 FROM base AS builder
