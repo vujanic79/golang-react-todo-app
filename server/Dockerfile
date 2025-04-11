@@ -1,43 +1,47 @@
+# ------------------------------
 # Base image
+# ------------------------------
 FROM golang:1.24-alpine AS base
 
-# Making image for development
-FROM base AS development
-
-WORKDIR /build
+WORKDIR /app
 
 COPY go.mod go.sum ./
-
 RUN go mod download
 
 COPY . .
 
-RUN cd cmd/web && go build -o bin/golang-react-todo-app
+# ------------------------------
+# Development image
+# ------------------------------
+FROM base AS development
+
+WORKDIR /app/cmd/web
+
+RUN go build -o /app/bin/golang-react-todo-app
+
+WORKDIR /app
 
 EXPOSE 8000
 
-CMD ["/build/cmd/web/bin/golang-react-todo-app"]
+CMD ["/app/bin/golang-react-todo-app"]
 
-# Builder for production
+# ------------------------------
+# Builder image for production
+# ------------------------------
 FROM base AS builder
 
-WORKDIR /build
+WORKDIR /app/cmd/web
 
-COPY go.mod go.sum ./
+RUN CGO_ENABLED=0 go build -o /app/bin/golang-react-todo-app
 
-RUN go mod download
-
-COPY . .
-
-RUN cd cmd/web && CGO_ENABLED=0 go build -o bin/golang-react-todo-app
-
-# Making small image for production
+# ------------------------------
+# Final production image
+# ------------------------------
 FROM scratch AS production
 
 WORKDIR /prod
 
-COPY --from=builder /build/cmd/web/bin/golang-react-todo-app ./
-
+COPY --from=builder /app/bin/golang-react-todo-app ./
 COPY pkg/db/data/ ./pkg/db/data/
 
 EXPOSE 8000

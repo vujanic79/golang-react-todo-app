@@ -3,7 +3,7 @@ services:
     build:
       context: .
       target: ${APP_ENV}
-    container_name: golang-react-todo-app
+    container_name: golang-react-todo-app-backend
     env_file:
       - ./.env
     environment:
@@ -46,7 +46,7 @@ services:
     build:
       context: .
       dockerfile: ./pkg/sql/schema/goose_docker_config/Dockerfile
-    container_name: golang-react-todo-app-goose
+    container_name: golang-react-todo-app-migrations
     env_file:
       - ./.env
     environment:
@@ -59,6 +59,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    command: ["./migrations.sh"]
     networks:
       - golang-react-todo-app-network
 
