@@ -16,6 +16,8 @@ COPY . .
 
 RUN cd cmd/web && go build -gcflags="all=-N -l" -o bin/golang-react-todo-app
 
+EXPOSE 8000 40000
+
 CMD ["/go/bin/dlv", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/build/cmd/web/bin/golang-react-todo-app"]
 #CMD ["/build/cmd/web/bin/golang-react-todo-app"]
 
