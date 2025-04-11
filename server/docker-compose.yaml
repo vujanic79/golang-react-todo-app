@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      target: ${GO_ENV}
+      target: ${APP_ENV}
     container_name: golang-react-todo-app
     ports:
       - "8000:8000"
