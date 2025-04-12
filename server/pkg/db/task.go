@@ -22,29 +22,28 @@ func NewTaskRepository(db *database.Queries) *TaskRepository {
 	return &TaskRepository{Db: db}
 }
 
-func (pDb *TaskRepository) CreateTask(
+func (tr *TaskRepository) CreateTask(
 	ctx context.Context,
 	userId uuid.UUID,
-	createTaskParams domain.CreateTaskParams) (task domain.Task, err error) {
-
+	params domain.CreateTaskParams) (task domain.Task, err error) {
 	l := logger.FromContext(ctx)
 	layout := "2006-01-02T15:04:05.999999Z"
-	date, err := time.Parse(layout, createTaskParams.CompleteDeadline)
+	date, err := time.Parse(layout, params.CompleteDeadline)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.CreateTask_params", zerolog.Dict().
-				Str("completeDeadline", createTaskParams.CompleteDeadline)).
+				Str("completeDeadline", params.CompleteDeadline)).
 			Msg("Parsing completeDeadline error")
 		return task, err
 	}
 
-	dbTask, err := pDb.Db.CreateTask(ctx, database.CreateTaskParams{
+	dbTask, err := tr.Db.CreateTask(ctx, database.CreateTaskParams{
 		ID:               uuid.New(),
 		CreatedAt:        time.Now().UTC(),
 		UpdatedAt:        time.Now().UTC(),
-		Title:            createTaskParams.Title,
-		Description:      createTaskParams.Description,
-		Status:           strings.ToUpper(createTaskParams.Status),
+		Title:            params.Title,
+		Description:      params.Description,
+		Status:           strings.ToUpper(params.Status),
 		CompleteDeadline: date,
 		UserID:           userId,
 	})
@@ -53,16 +52,16 @@ func (pDb *TaskRepository) CreateTask(
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.CreateTask_params", zerolog.Dict().
-				Object("createTaskParams", createTaskParams)).
+				Object("params", params)).
 			Msg("Creating task error")
 	}
 	// [*] END
 	return mapDbTaskToTask(dbTask), err
 }
 
-func (pDb *TaskRepository) DeleteTask(ctx context.Context, taskId uuid.UUID) (err error) {
+func (tr *TaskRepository) DeleteTask(ctx context.Context, taskId uuid.UUID) (err error) {
 	l := logger.FromContext(ctx)
-	err = pDb.Db.DeleteTask(ctx, taskId)
+	err = tr.Db.DeleteTask(ctx, taskId)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.DeleteTask_params", zerolog.Dict().
@@ -72,45 +71,44 @@ func (pDb *TaskRepository) DeleteTask(ctx context.Context, taskId uuid.UUID) (er
 	return err
 }
 
-func (pDb *TaskRepository) UpdateTask(ctx context.Context, updateTaskParams domain.UpdateTaskParams) (task domain.Task, err error) {
+func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTaskParams) (task domain.Task, err error) {
 	l := logger.FromContext(ctx)
-
 	layout := "2006-01-02T15:04:05.999999Z"
-	date, err := time.Parse(layout, updateTaskParams.CompleteDeadline)
+	date, err := time.Parse(layout, params.CompleteDeadline)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.UpdateTask_params", zerolog.Dict().
-				Str("completeDeadline", updateTaskParams.CompleteDeadline)).
+				Str("completeDeadline", params.CompleteDeadline)).
 			Msg("Parsing completeDeadline error")
 		return task, err
 	}
 
-	dbTask, err := pDb.Db.UpdateTask(ctx, database.UpdateTaskParams{
-		ID:               updateTaskParams.ID,
-		Title:            updateTaskParams.Title,
-		Description:      updateTaskParams.Description,
+	dbTask, err := tr.Db.UpdateTask(ctx, database.UpdateTaskParams{
+		ID:               params.ID,
+		Title:            params.Title,
+		Description:      params.Description,
 		CompleteDeadline: date,
-		Status:           strings.ToUpper(updateTaskParams.Status),
+		Status:           strings.ToUpper(params.Status),
 	})
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.UpdateTask_params", zerolog.Dict().
-				Object("updateTaskParams", updateTaskParams)).
+				Object("params", params)).
 			Msg("Updating task error")
 	}
 	// [*] END
 	return mapDbTaskToTask(dbTask), err
 }
-func (pDb *TaskRepository) GetTasksByUserId(ctx context.Context, userID uuid.UUID) (tasks []domain.Task, err error) {
+func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, userID uuid.UUID) (tasks []domain.Task, err error) {
 	l := logger.FromContext(ctx)
-	dbTasks, err := pDb.Db.GetTasksByUserId(ctx, userID)
+	dbTasks, err := tr.Db.GetTasksByUserId(ctx, userID)
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.GetTaskByUserId_params", zerolog.Dict().
 				Interface("userId", userID)).
-			Msg("Updating task error")
+			Msg("Getting tasks by userId error")
 	}
 	// [*] END
 	return mapDbTasksToTasks(dbTasks), err
