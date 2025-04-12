@@ -23,8 +23,6 @@ WORKDIR /app
 
 EXPOSE 8000
 
-CMD ["/app/bin/golang-react-todo-app"]
-
 # ------------------------------
 # Builder image for production
 # ------------------------------
@@ -39,11 +37,9 @@ RUN CGO_ENABLED=0 go build -o /app/bin/golang-react-todo-app
 # ------------------------------
 FROM scratch AS production
 
-WORKDIR /prod
+WORKDIR /app
 
-COPY --from=builder /app/bin/golang-react-todo-app ./
+COPY --from=builder /app/bin/golang-react-todo-app ./bin
 COPY pkg/db/data/ ./pkg/db/data/
 
 EXPOSE 8000
-
-CMD ["/prod/golang-react-todo-app"]

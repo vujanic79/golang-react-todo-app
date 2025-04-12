@@ -14,6 +14,7 @@ services:
       POSTGRES_USER: ${DB_USER}
     ports:
       - "8000:8000"
+    command: ["/app/bin/golang-react-todo-app"]
     depends_on:
       goose:
         condition: service_completed_successfully
