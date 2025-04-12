@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	er "errors"
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
@@ -25,8 +24,8 @@ func GetPostgreSQLConnection() (dbQueries *database.Queries) {
 
 	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", dbDriver, dbUser, dbPassword, dbHost, dbPort, dbName, dbSslMode)
 	db, err := sql.Open("postgres", dbUrl)
-	if err == nil {
-		l.Error().Stack().Err(errors.WithStack(er.New("Fake error"))).
+	if err != nil {
+		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("connectionParams", zerolog.Dict().
 				Str("driver", dbDriver).
 				Str("host", dbHost).
