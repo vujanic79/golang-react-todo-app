@@ -1,16 +1,20 @@
 package db
 
 import (
-	"context"
 	"database/sql"
+	er "errors"
 	"fmt"
 	_ "github.com/lib/pq"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
-	"log/slog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 	"os"
 )
 
 func GetPostgreSQLConnection() (dbQueries *database.Queries) {
+	l := logger.Get()
+
 	dbDriver := os.Getenv("DB_DRIVER")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -21,11 +25,15 @@ func GetPostgreSQLConnection() (dbQueries *database.Queries) {
 
 	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", dbDriver, dbUser, dbPassword, dbHost, dbPort, dbName, dbSslMode)
 	db, err := sql.Open("postgres", dbUrl)
-	if err != nil {
-		slog.LogAttrs(context.Background(), slog.LevelError, "Failed to connect to database",
-			slog.Group("connectionParams",
-				slog.String("driver", dbDriver), slog.String("host", dbHost), slog.String("port", dbPort),
-				slog.String("name", dbName), slog.String("sslmode", dbSslMode)))
+	if err == nil {
+		l.Error().Stack().Err(errors.WithStack(er.New("Fake error"))).
+			Dict("connectionParams", zerolog.Dict().
+				Str("driver", dbDriver).
+				Str("host", dbHost).
+				Str("port", dbPort).
+				Str("name", dbName).
+				Str("sslmode", dbSslMode)).
+			Msg("Database connection error")
 	}
 	dbQueries = database.New(db)
 	return dbQueries
