@@ -24,27 +24,3 @@ RUN go build -gcflags="all=-N -l" -o /app/bin/golang-react-todo-app
 WORKDIR /app
 
 EXPOSE 8000 40000
-CMD ["/go/bin/dlv", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/app/bin/golang-react-todo-app"]
-
-# ------------------------------
-# Builder image for production
-# ------------------------------
-FROM base AS builder
-
-WORKDIR /app/cmd/web
-
-RUN CGO_ENABLED=0 go build -o /app/bin/golang-react-todo-app
-
-# ------------------------------
-# Final production image
-# ------------------------------
-FROM scratch AS production
-
-WORKDIR /prod
-
-COPY --from=builder /app/bin/golang-react-todo-app ./
-COPY pkg/db/data/ ./pkg/db/data/
-
-EXPOSE 8000
-
-CMD ["/prod/golang-react-todo-app"]
