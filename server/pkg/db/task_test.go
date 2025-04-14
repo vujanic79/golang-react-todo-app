@@ -5,25 +5,25 @@ import (
 )
 
 func TestMapDbTaskToTask(t *testing.T) {
-	dbTask := generateDbTask("Task 1", "Task 1 description", "ACTIVE")
-	want := generateTask(dbTask)
+	dbT := generateDbTask("Task 1", "Task 1 description", "ACTIVE")
+	want := generateTask(dbT)
 
-	task := mapDbTaskToTask(dbTask)
+	task := mapDbTaskToTask(dbT)
 	areEqual := checkTaskEquality(want, task)
 
 	if !areEqual {
-		t.Errorf("MapDbTaskToTask(dbTask) = %v, want %v", task, want)
+		t.Errorf("MapDbTaskToTask(dbT) = %v, want %v", task, want)
 	}
 }
 
 func TestMapDbTasksToTasks(t *testing.T) {
-	dbTasks := generateDbTasks()
-	want := generateTasks(dbTasks)
+	dbTs := generateDbTasks()
+	want := generateTasks(dbTs)
 
-	tasks := mapDbTasksToTasks(dbTasks)
-	areEqual := checkTasksEquality(want, tasks)
+	ts := mapDbTasksToTasks(dbTs)
+	areEqual := checkTasksEquality(want, ts)
 
 	if !areEqual {
-		t.Errorf("MapDbTasksToTasks(dbTasks) = %v, want %v", tasks, want)
+		t.Errorf("MapDbTasksToTasks(dbTs) = %v, want %v", ts, want)
 	}
 }

@@ -66,8 +66,8 @@ func mapDbTaskStatusToTaskStatus(dbTs string) (ts domain.TaskStatus) {
 
 func mapDbTaskStatusesToTaskStatuses(dbTss []string) (tss []domain.TaskStatus) {
 	tss = make([]domain.TaskStatus, len(dbTss))
-	for index, taskStatus := range dbTss {
-		tss[index] = mapDbTaskStatusToTaskStatus(taskStatus)
+	for i, taskStatus := range dbTss {
+		tss[i] = mapDbTaskStatusToTaskStatus(taskStatus)
 	}
 	return tss
 }
