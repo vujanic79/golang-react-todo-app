@@ -1,4 +1,4 @@
-package app
+package service
 
 import (
 	"context"
@@ -22,7 +22,7 @@ func (us *UserService) CreateUser(ctx context.Context, params domain.CreateUserP
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "CreateUser").
 			Object("params", params)).
 		Logger()
@@ -36,7 +36,7 @@ func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (id u
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "GetUserUserIdByEmail").
 			Dict("params", zerolog.Dict().
 				Str("email", email))).

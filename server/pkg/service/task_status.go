@@ -1,4 +1,4 @@
-package app
+package service
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, status strin
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "CreateTaskStatus").
 			Dict("params", zerolog.Dict().
 				Str("status", status))).
@@ -36,7 +36,7 @@ func (tss *TaskStatusService) GetTaskStatuses(ctx context.Context) (taskStatuses
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "GetTaskStatuses").
 			Dict("params", zerolog.Dict())).
 		Logger()
@@ -50,7 +50,7 @@ func (tss *TaskStatusService) GetTaskStatusByStatus(ctx context.Context, status 
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "GetTaskStatusByStatus").
 			Dict("params", zerolog.Dict().
 				Str("status", status))).

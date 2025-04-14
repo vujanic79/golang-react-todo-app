@@ -31,7 +31,7 @@ func (tr *TaskRepository) CreateTask(
 	parsedTime, err := time.Parse(layout, params.CompleteDeadline)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "CreateTask").
 				Dict("params", zerolog.Dict().
 					Str("completeDeadline", params.CompleteDeadline))).
@@ -52,7 +52,7 @@ func (tr *TaskRepository) CreateTask(
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "CreateTask").
 				Dict("params", zerolog.Dict().
 					Interface("userId", userId).
@@ -69,7 +69,7 @@ func (tr *TaskRepository) DeleteTask(ctx context.Context, id uuid.UUID) (err err
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "DeleteTask").
 				Dict("params", zerolog.Dict().
 					Interface("id", id))).
@@ -86,7 +86,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "UpdateTask").
 				Dict("params", zerolog.Dict().
 					Str("completeDeadline", params.CompleteDeadline))).
@@ -104,7 +104,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "UpdateTask").
 				Dict("params", zerolog.Dict().
 					Object("params", params))).
@@ -119,7 +119,7 @@ func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (t
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "GetTasksByUserId").
 				Dict("params", zerolog.Dict().
 					Interface("userId", id))).

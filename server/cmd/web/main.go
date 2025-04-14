@@ -4,16 +4,16 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/pkg/errors"
-	"github.com/vujanic79/golang-react-todo-app/pkg/app"
-	"github.com/vujanic79/golang-react-todo-app/pkg/db"
-	"github.com/vujanic79/golang-react-todo-app/pkg/db/data"
-	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest"
+	"github.com/vujanic79/golang-react-todo-app/pkg/controller"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
+	"github.com/vujanic79/golang-react-todo-app/pkg/repository"
+	"github.com/vujanic79/golang-react-todo-app/pkg/repository/data"
+	"github.com/vujanic79/golang-react-todo-app/pkg/service"
 	"net/http"
 	"os"
 )
 
-const taskStatusesData = "./pkg/db/data/task_statuses.csv"
+const taskStatusesData = "./pkg/repository/data/task_statuses.csv"
 
 func main() {
 	l := logger.Get()
@@ -41,13 +41,13 @@ func main() {
 	taskRepository := db.NewTaskRepository(dbQueries)
 	taskStatusRepository := db.NewTaskStatusRepository(dbQueries)
 
-	userService := app.NewUserService(userRepository)
-	taskService := app.NewTaskService(taskRepository)
-	taskStatusService := app.NewTaskStatusService(taskStatusRepository)
+	userService := service.NewUserService(userRepository)
+	taskService := service.NewTaskService(taskRepository)
+	taskStatusService := service.NewTaskStatusService(taskStatusRepository)
 
-	userController := http_rest.NewUserController(userService)
-	taskController := http_rest.NewTaskController(taskService, userService)
-	taskStatusController := http_rest.NewTaskStatusController(taskStatusService)
+	userController := controller.NewUserController(userService)
+	taskController := controller.NewTaskController(taskService, userService)
+	taskStatusController := controller.NewTaskStatusController(taskStatusService)
 
 	subR := chi.NewRouter()
 	subR.Post("/users", userController.CreateUser)

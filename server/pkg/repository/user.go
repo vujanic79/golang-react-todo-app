@@ -34,7 +34,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "CreateUser").
 				Object("params", params)).
 			Msg("Creating user error")
@@ -49,7 +49,7 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (i
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "GetUserUserIdByEmail").
 				Dict("params", zerolog.Dict().
 					Str("email", email))).
