@@ -1,6 +1,6 @@
 FROM gomicro/goose
 
-WORKDIR /pkg/sql/schema
+WORKDIR /migrations
 
 ADD /pkg/sql/schema/*.sql ./
 ADD /pkg/sql/schema/goose_docker_config/migrations.sh ./migrations.sh
