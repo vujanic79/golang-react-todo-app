@@ -17,34 +17,34 @@ type UserRepository struct {
 
 var _ domain.UserRepository = (*UserRepository)(nil)
 
-func NewUserRepository(db *database.Queries) *UserRepository {
+func NewUserRepository(db *database.Queries) (ur *UserRepository) {
 	return &UserRepository{Db: db}
 }
 
-func (ur *UserRepository) CreateUser(ctx context.Context, createUserParams domain.CreateUserParams) (user domain.User, err error) {
+func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUserParams) (u domain.User, err error) {
 	l := logger.FromContext(ctx)
-	dbUser, err := ur.Db.CreateUser(ctx, database.CreateUserParams{
+	dbU, err := ur.Db.CreateUser(ctx, database.CreateUserParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
-		FirstName: createUserParams.FirstName,
-		LastName:  createUserParams.LastName,
-		Email:     createUserParams.Email,
+		FirstName: params.FirstName,
+		LastName:  params.LastName,
+		Email:     params.Email,
 	})
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.CreateUser_params", zerolog.Dict().
-				Object("createUserParams", createUserParams)).
+				Object("params", params)).
 			Msg("Creating user error")
 	}
 	// [*] END
-	return mapDbUserToUser(dbUser), err
+	return mapDbUserToUser(dbU), err
 }
 
-func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (userId uuid.UUID, err error) {
+func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error) {
 	l := logger.FromContext(ctx)
-	userId, err = ur.Db.GetUserIdByEmail(ctx, email)
+	id, err = ur.Db.GetUserIdByEmail(ctx, email)
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
@@ -53,16 +53,16 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (u
 			Msg("Getting user id by email error")
 	}
 	// [*] END
-	return userId, err
+	return id, err
 }
 
-func mapDbUserToUser(dbUser database.AppUser) domain.User {
+func mapDbUserToUser(dbU database.AppUser) (u domain.User) {
 	return domain.User{
-		ID:        dbUser.ID,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		FirstName: dbUser.FirstName,
-		LastName:  dbUser.LastName,
-		Email:     dbUser.Email,
+		ID:        dbU.ID,
+		CreatedAt: dbU.CreatedAt,
+		UpdatedAt: dbU.UpdatedAt,
+		FirstName: dbU.FirstName,
+		LastName:  dbU.LastName,
+		Email:     dbU.Email,
 	}
 }

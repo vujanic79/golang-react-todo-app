@@ -47,8 +47,8 @@ type UpdateTaskParams struct {
 	CompleteDeadline string    `json:"completeDeadline"`
 }
 
-func (utp UpdateTaskParams) MarshalZerologObject(event *zerolog.Event) {
-	event.
+func (utp UpdateTaskParams) MarshalZerologObject(e *zerolog.Event) {
+	e.
 		Interface("id", utp.ID).
 		Str("title", utp.Title).
 		Str("description", utp.Description).
