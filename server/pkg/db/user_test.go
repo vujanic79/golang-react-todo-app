@@ -3,13 +3,13 @@ package db
 import "testing"
 
 func TestMapDbUserToUser(t *testing.T) {
-	dbUser := generateDbUser("John", "Doe", "john.doe@gmail.com")
-	want := generateUser(dbUser)
+	dbU := generateDbUser("John", "Doe", "john.doe@gmail.com")
+	want := generateUser(dbU)
 
-	user := mapDbUserToUser(dbUser)
-	areEqual := checkUserEquality(want, user)
+	u := mapDbUserToUser(dbU)
+	areEqual := checkUserEquality(want, u)
 
 	if !areEqual {
-		t.Errorf("MapDbUserToUser(dbUser) = %v, want %v", user, want)
+		t.Errorf("MapDbUserToUser(dbU) = %v, want %v", u, want)
 	}
 }

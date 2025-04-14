@@ -9,22 +9,22 @@ func TestMapDbTaskStatusToTaskStatus(t *testing.T) {
 	status := "PENDING"
 	want := domain.TaskStatus{Status: status}
 
-	taskStatus := mapDbTaskStatusToTaskStatus(status)
-	areEqual := checkTaskStatusEquality(want, taskStatus)
-	
+	ts := mapDbTaskStatusToTaskStatus(status)
+	areEqual := checkTaskStatusEquality(want, ts)
+
 	if !areEqual {
-		t.Errorf("MapDbTaskStatusToTaskStatus(dbTaskStatus) = %v, want %v", taskStatus.Status, want.Status)
+		t.Errorf("MapDbTaskStatusToTaskStatus(status) = %v, want %v", ts.Status, want.Status)
 	}
 }
 
 func TestMapDbTaskStatusesToTaskStatuses(t *testing.T) {
-	dbStatuses := []string{"PENDING", "ACTIVE", "COMPLETED"}
-	want := generateTaskStatuses(dbStatuses)
+	statuses := []string{"PENDING", "ACTIVE", "COMPLETED"}
+	want := generateTaskStatuses(statuses)
 
-	taskStatuses := mapDbTaskStatusesToTaskStatuses(dbStatuses)
-	areEqual := checkTaskStatusesEquality(want, taskStatuses)
+	tss := mapDbTaskStatusesToTaskStatuses(statuses)
+	areEqual := checkTaskStatusesEquality(want, tss)
 
 	if !areEqual {
-		t.Errorf("MapDbTaskStatusesToTaskStatuses(dbStatuses) = %v, want %v", taskStatuses, want)
+		t.Errorf("MapDbTaskStatusesToTaskStatuses(statuses) = %v, want %v", tss, want)
 	}
 }

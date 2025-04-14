@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func generateDbUser(firstName string, lastName string, email string) database.AppUser {
+func generateDbUser(firstName string, lastName string, email string) (dbU database.AppUser) {
 	return database.AppUser{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
@@ -19,27 +19,27 @@ func generateDbUser(firstName string, lastName string, email string) database.Ap
 	}
 }
 
-func generateUser(dbUser database.AppUser) domain.User {
+func generateUser(dbU database.AppUser) (u domain.User) {
 	return domain.User{
-		ID:        dbUser.ID,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		FirstName: dbUser.FirstName,
-		LastName:  dbUser.LastName,
-		Email:     dbUser.Email,
+		ID:        dbU.ID,
+		CreatedAt: dbU.CreatedAt,
+		UpdatedAt: dbU.UpdatedAt,
+		FirstName: dbU.FirstName,
+		LastName:  dbU.LastName,
+		Email:     dbU.Email,
 	}
 }
 
-func checkUserEquality(want domain.User, user domain.User) bool {
-	return want.ID == user.ID &&
-		want.CreatedAt == user.CreatedAt &&
-		want.UpdatedAt == user.UpdatedAt &&
-		want.FirstName == user.FirstName &&
-		want.LastName == user.LastName &&
-		want.Email == user.Email
+func checkUserEquality(want domain.User, u domain.User) bool {
+	return want.ID == u.ID &&
+		want.CreatedAt == u.CreatedAt &&
+		want.UpdatedAt == u.UpdatedAt &&
+		want.FirstName == u.FirstName &&
+		want.LastName == u.LastName &&
+		want.Email == u.Email
 }
 
-func generateDbTask(title string, description string, status string) database.Task {
+func generateDbTask(title string, description string, status string) (dbT database.Task) {
 	return database.Task{
 		ID:               uuid.New(),
 		CreatedAt:        time.Now().UTC(),
@@ -52,61 +52,61 @@ func generateDbTask(title string, description string, status string) database.Ta
 	}
 }
 
-func generateTask(dbTask database.Task) domain.Task {
+func generateTask(dbT database.Task) (t domain.Task) {
 	return domain.Task{
-		ID:               dbTask.ID,
-		CreatedAt:        dbTask.CreatedAt,
-		UpdatedAt:        dbTask.UpdatedAt,
-		Title:            dbTask.Title,
-		Description:      dbTask.Description,
-		Status:           dbTask.Status,
-		CompleteDeadline: dbTask.CompleteDeadline,
-		UserID:           dbTask.UserID,
+		ID:               dbT.ID,
+		CreatedAt:        dbT.CreatedAt,
+		UpdatedAt:        dbT.UpdatedAt,
+		Title:            dbT.Title,
+		Description:      dbT.Description,
+		Status:           dbT.Status,
+		CompleteDeadline: dbT.CompleteDeadline,
+		UserID:           dbT.UserID,
 	}
 }
 
-func generateDbTasks() []database.Task {
+func generateDbTasks() (dbTs []database.Task) {
 	return []database.Task{
 		generateDbTask("Task1", "Description1", "ACTIVE"),
 		generateDbTask("Task2", "Description2", "PENDING"),
 	}
 }
 
-func generateTasks(dbTasks []database.Task) []domain.Task {
-	tasks := make([]domain.Task, len(dbTasks))
-	for index, dbTask := range dbTasks {
-		tasks[index] = generateTask(dbTask)
+func generateTasks(dbTs []database.Task) (ts []domain.Task) {
+	tasks := make([]domain.Task, len(dbTs))
+	for i, dbTask := range dbTs {
+		tasks[i] = generateTask(dbTask)
 	}
 	return tasks
 }
 
-func checkTaskEquality(want domain.Task, task domain.Task) bool {
+func checkTaskEquality(want domain.Task, t domain.Task) bool {
 	return want.ID == want.ID &&
-		want.CreatedAt == task.CreatedAt &&
-		want.UpdatedAt == task.UpdatedAt &&
-		want.Title == task.Title &&
-		want.Description == task.Description &&
-		want.Status == task.Status &&
-		want.CompleteDeadline == task.CompleteDeadline &&
+		want.CreatedAt == t.CreatedAt &&
+		want.UpdatedAt == t.UpdatedAt &&
+		want.Title == t.Title &&
+		want.Description == t.Description &&
+		want.Status == t.Status &&
+		want.CompleteDeadline == t.CompleteDeadline &&
 		want.UserID == want.UserID
 }
 
-func checkTasksEquality(want []domain.Task, tasks []domain.Task) bool {
-	return slices.Equal(want, tasks)
+func checkTasksEquality(want []domain.Task, ts []domain.Task) bool {
+	return slices.Equal(want, ts)
 }
 
-func generateTaskStatuses(dbStatuses []string) []domain.TaskStatus {
-	taskStatuses := make([]domain.TaskStatus, len(dbStatuses))
-	for index, dbStatus := range dbStatuses {
-		taskStatuses[index] = domain.TaskStatus{Status: dbStatus}
+func generateTaskStatuses(dbtss []string) (tss []domain.TaskStatus) {
+	tss = make([]domain.TaskStatus, len(dbtss))
+	for i, dbTs := range dbtss {
+		tss[i] = domain.TaskStatus{Status: dbTs}
 	}
-	return taskStatuses
+	return tss
 }
 
-func checkTaskStatusEquality(want domain.TaskStatus, taskStatus domain.TaskStatus) bool {
-	return want.Status == taskStatus.Status
+func checkTaskStatusEquality(want domain.TaskStatus, ts domain.TaskStatus) bool {
+	return want.Status == ts.Status
 }
 
-func checkTaskStatusesEquality(want []domain.TaskStatus, taskStatuses []domain.TaskStatus) bool {
-	return slices.Equal(want, taskStatuses)
+func checkTaskStatusesEquality(want []domain.TaskStatus, tss []domain.TaskStatus) bool {
+	return slices.Equal(want, tss)
 }

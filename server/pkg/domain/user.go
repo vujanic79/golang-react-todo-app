@@ -26,21 +26,21 @@ type CreateUserParams struct {
 	Email     string    `json:"email"`
 }
 
-func (cup CreateUserParams) MarshalZerologObject(event *zerolog.Event) {
-	event.
+func (cup CreateUserParams) MarshalZerologObject(e *zerolog.Event) {
+	e.
 		Str("first_name", cup.FirstName).
 		Str("last_name", cup.LastName).
 		Str("email", cup.Email)
 }
 
 type UserService interface {
-	CreateUser(ctx context.Context, createUserParams CreateUserParams) (user User, err error)
-	GetUserIdByEmail(ctx context.Context, email string) (userId uuid.UUID, err error)
+	CreateUser(ctx context.Context, params CreateUserParams) (u User, err error)
+	GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error)
 }
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, createUserParams CreateUserParams) (user User, err error)
-	GetUserIdByEmail(ctx context.Context, email string) (userId uuid.UUID, err error)
+	CreateUser(ctx context.Context, params CreateUserParams) (u User, err error)
+	GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error)
 }
 
 type UserController interface {

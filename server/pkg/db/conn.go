@@ -1,32 +1,39 @@
 package db
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
-	"log/slog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 	"os"
 )
 
-func GetPostgreSQLConnection() (dbQueries *database.Queries) {
-	dbDriver := os.Getenv("DB_DRIVER")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-	dbSslMode := os.Getenv("DB_SSL_MODE")
+func GetPostgreSQLConnection() (db *database.Queries) {
+	l := logger.Get()
 
-	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", dbDriver, dbUser, dbPassword, dbHost, dbPort, dbName, dbSslMode)
-	db, err := sql.Open("postgres", dbUrl)
+	driver := os.Getenv("DB_DRIVER")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	name := os.Getenv("DB_NAME")
+	sslMode := os.Getenv("DB_SSL_MODE")
+
+	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", driver, user, password, host, port, name, sslMode)
+	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		slog.LogAttrs(context.Background(), slog.LevelError, "Failed to connect to database",
-			slog.Group("connectionParams",
-				slog.String("driver", dbDriver), slog.String("host", dbHost), slog.String("port", dbPort),
-				slog.String("name", dbName), slog.String("sslmode", dbSslMode)))
+		l.Error().Stack().Err(errors.WithStack(err)).
+			Dict("connectionParams", zerolog.Dict().
+				Str("driver", driver).
+				Str("host", host).
+				Str("port", port).
+				Str("name", name).
+				Str("sslmode", sslMode)).
+			Msg("Database connection error")
 	}
-	dbQueries = database.New(db)
-	return dbQueries
+	db = database.New(conn)
+	return db
 }

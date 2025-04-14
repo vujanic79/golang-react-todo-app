@@ -9,60 +9,67 @@ import (
 )
 
 type TaskService struct {
-	TaskRepository domain.TaskRepository
+	Tr domain.TaskRepository
 }
 
 var _ domain.TaskService = (*TaskService)(nil)
 
-func NewTaskService(taskRepository domain.TaskRepository) TaskService {
-	return TaskService{TaskRepository: taskRepository}
+func NewTaskService(tr domain.TaskRepository) (ts TaskService) {
+	return TaskService{Tr: tr}
 }
 
-func (ts TaskService) CreateTask(ctx context.Context, userId uuid.UUID, createTaskParams domain.CreateTaskParams) (task domain.Task, err error) {
+func (ts TaskService) CreateTask(ctx context.Context, userId uuid.UUID, params domain.CreateTaskParams) (t domain.Task, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.CreateTask_params", zerolog.Dict().
-			Interface("userId", userId).
-			Object("createTaskParams", createTaskParams)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "CreateTask").
+			Dict("params", zerolog.Dict().
+				Interface("userId", userId).
+				Object("params", params))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	return ts.TaskRepository.CreateTask(ctx, userId, createTaskParams)
+
+	return ts.Tr.CreateTask(ctx, userId, params)
 }
 
 func (ts TaskService) DeleteTask(ctx context.Context, id uuid.UUID) (err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.DeleteTask_params", zerolog.Dict().
-			Interface("id", id)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "DeleteTask").
+			Dict("params", zerolog.Dict().
+				Interface("id", id))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	return ts.TaskRepository.DeleteTask(ctx, id)
+
+	return ts.Tr.DeleteTask(ctx, id)
 }
 
-func (ts TaskService) UpdateTask(ctx context.Context, updateTaskParams domain.UpdateTaskParams) (dbTask domain.Task, err error) {
+func (ts TaskService) UpdateTask(ctx context.Context, params domain.UpdateTaskParams) (t domain.Task, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.UpdateTask_params", zerolog.Dict().
-			Object("updateTaskParams", updateTaskParams)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "UpdateTask").
+			Object("params", params)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	return ts.TaskRepository.UpdateTask(ctx, updateTaskParams)
+
+	return ts.Tr.UpdateTask(ctx, params)
 }
 
-func (ts TaskService) GetTasksByUserId(ctx context.Context, userID uuid.UUID) (dbTasks []domain.Task, err error) {
+func (ts TaskService) GetTasksByUserId(ctx context.Context, id uuid.UUID) (tasks []domain.Task, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.GetTasksByUserId_params", zerolog.Dict().
-			Interface("userId", userID)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetTasksByUserId").
+			Dict("params", zerolog.Dict().
+				Interface("userId", id))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	return ts.TaskRepository.GetTasksByUserId(ctx, userID)
+
+	return ts.Tr.GetTasksByUserId(ctx, id)
 }

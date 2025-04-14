@@ -9,37 +9,40 @@ import (
 )
 
 type UserService struct {
-	UserRepository domain.UserRepository
+	Ur domain.UserRepository
 }
 
 var _ domain.UserService = (*UserService)(nil)
 
-func NewUserService(db domain.UserRepository) *UserService {
-	return &UserService{UserRepository: db}
+func NewUserService(ur domain.UserRepository) (us *UserService) {
+	return &UserService{Ur: ur}
 }
 
-func (us *UserService) CreateUser(ctx context.Context, createUserParams domain.CreateUserParams) (user domain.User, err error) {
+func (us *UserService) CreateUser(ctx context.Context, params domain.CreateUserParams) (u domain.User, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.CreateUser_params", zerolog.Dict().
-			Object("create_user_params", createUserParams)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "CreateUser").
+			Object("params", params)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	user, err = us.UserRepository.CreateUser(ctx, createUserParams)
-	return user, err
+
+	u, err = us.Ur.CreateUser(ctx, params)
+	return u, err
 }
 
-func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (userId uuid.UUID, err error) {
+func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
-		Dict("app.GetUserIdByEmail_params", zerolog.Dict().
-			Str("email", email)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetUserUserIdByEmail").
+			Dict("params", zerolog.Dict().
+				Str("email", email))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
-	userId, err = us.UserRepository.GetUserIdByEmail(ctx, email)
-	return userId, err
+
+	id, err = us.Ur.GetUserIdByEmail(ctx, email)
+	return id, err
 }
