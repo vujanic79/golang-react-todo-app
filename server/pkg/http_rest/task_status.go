@@ -90,7 +90,7 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 
 func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	status := chi.URLParam(r, "ts")
+	status := chi.URLParam(r, "taskStatus")
 
 	// [*] START - Add http request data to context
 	l = l.With().

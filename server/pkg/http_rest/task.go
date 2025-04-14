@@ -81,7 +81,7 @@ func (tc *TaskController) CreateTask(
 
 func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	idStr := chi.URLParam(r, "id")
+	idStr := chi.URLParam(r, "taskId")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
@@ -110,7 +110,7 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	idStr := chi.URLParam(r, "id")
+	idStr := chi.URLParam(r, "taskId")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
