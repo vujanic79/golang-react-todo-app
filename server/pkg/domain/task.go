@@ -61,17 +61,17 @@ type GetTasksByUserIdParams struct {
 }
 
 type TaskService interface {
-	CreateTask(ctx context.Context, userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
+	CreateTask(ctx context.Context, userId uuid.UUID, params CreateTaskParams) (t Task, err error)
 	DeleteTask(ctx context.Context, id uuid.UUID) (err error)
-	UpdateTask(ctx context.Context, updateTaskParams UpdateTaskParams) (dbTask Task, err error)
-	GetTasksByUserId(ctx context.Context, userID uuid.UUID) (dbTasks []Task, err error)
+	UpdateTask(ctx context.Context, params UpdateTaskParams) (t Task, err error)
+	GetTasksByUserId(ctx context.Context, id uuid.UUID) (ts []Task, err error)
 }
 
 type TaskRepository interface {
-	CreateTask(ctx context.Context, userId uuid.UUID, createTaskParams CreateTaskParams) (dbTask Task, err error)
+	CreateTask(ctx context.Context, userId uuid.UUID, params CreateTaskParams) (t Task, err error)
 	DeleteTask(ctx context.Context, id uuid.UUID) (err error)
-	UpdateTask(ctx context.Context, updateTaskParams UpdateTaskParams) (dbTask Task, err error)
-	GetTasksByUserId(ctx context.Context, userID uuid.UUID) (dbTasks []Task, err error)
+	UpdateTask(ctx context.Context, params UpdateTaskParams) (t Task, err error)
+	GetTasksByUserId(ctx context.Context, id uuid.UUID) (ts []Task, err error)
 }
 
 type TaskController interface {

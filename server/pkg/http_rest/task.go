@@ -15,14 +15,14 @@ import (
 )
 
 type TaskController struct {
-	TaskService domain.TaskService
-	UserService domain.UserService
+	Ts domain.TaskService
+	Us domain.UserService
 }
 
 var _ domain.TaskController = (*TaskController)(nil)
 
-func NewTaskController(taskService domain.TaskService, userService domain.UserService) TaskController {
-	return TaskController{TaskService: taskService, UserService: userService}
+func NewTaskController(ts domain.TaskService, us domain.UserService) (tc TaskController) {
+	return TaskController{Ts: ts, Us: us}
 }
 
 func (tc *TaskController) CreateTask(
@@ -31,26 +31,26 @@ func (tc *TaskController) CreateTask(
 	l := logger.Get()
 
 	// [*] START: Reading r.Body data, and restoring it for further usage
-	rBodyBytes, err := io.ReadAll(r.Body)
+	b, err := io.ReadAll(r.Body)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
 
-	reader := io.NopCloser(bytes.NewBuffer(rBodyBytes))
+	reader := io.NopCloser(bytes.NewBuffer(b))
 	r.Body = reader
 	// [*] END
 
 	decoder := json.NewDecoder(r.Body)
-	var createTaskParams domain.CreateTaskParams
-	err = decoder.Decode(&createTaskParams)
+	var params domain.CreateTaskParams
+	err = decoder.Decode(&params)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("requestBody", string(rBodyBytes)). // Raw string
-			Msg("Creating task error")
+			Str("body", string(b)). // Raw string
+			Msg("Creating t error")
 		RespondWithError(w, http.StatusBadRequest, "Parsing task data from the body error")
 		return
 	}
@@ -60,33 +60,33 @@ func (tc *TaskController) CreateTask(
 		Dict("http_rest.CreateTask_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			RawJSON("requestBody", rBodyBytes)).
+			RawJSON("body", b)).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
-	userId, err := tc.UserService.GetUserIdByEmail(ctx, createTaskParams.UserEmail)
+	userId, err := tc.Us.GetUserIdByEmail(ctx, params.UserEmail)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
-	task, err := tc.TaskService.CreateTask(ctx, userId, createTaskParams)
+	t, err := tc.Ts.CreateTask(ctx, userId, params)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error creating task")
 		return
 	}
 
-	RespondWithJson(w, http.StatusCreated, task)
+	RespondWithJson(w, http.StatusCreated, t)
 }
 
 func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	taskIdStr := chi.URLParam(r, "taskId")
-	taskId, err := uuid.Parse(taskIdStr)
+	idStr := chi.URLParam(r, "id")
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Str("taskIdStr", taskIdStr).
-			Msg("Parsing taskIdStr error")
+			Str("id", idStr).
+			Msg("Parsing id error")
 		RespondWithError(w, http.StatusBadRequest, "Invalid task id")
 		return
 	}
@@ -96,51 +96,51 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 		Dict("http_rest.DeleteTask_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("urlParam", taskIdStr)).
+			Str("urlParam", idStr)).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
-	err = tc.TaskService.DeleteTask(ctx, taskId)
+	err = tc.Ts.DeleteTask(ctx, id)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error deleting task")
 		return
 	}
-	RespondWithJson(w, http.StatusOK, fmt.Sprintf("Task with id %s successfully deleted", taskId))
+	RespondWithJson(w, http.StatusOK, fmt.Sprintf("Task with id %s successfully deleted", id))
 }
 
 func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	taskIdStr := chi.URLParam(r, "taskId")
-	taskId, err := uuid.Parse(taskIdStr)
+	idStr := chi.URLParam(r, "id")
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Str("taskIdStr", taskIdStr).
-			Msg("Parsing taskIdStr error")
+			Str("id", idStr).
+			Msg("Parsing id error")
 		RespondWithError(w, http.StatusBadRequest, "Invalid task id")
 		return
 	}
 
 	// [*] START: Reading r.Body data, and restoring it for further usage
-	rBodyBytes, err := io.ReadAll(r.Body)
+	b, err := io.ReadAll(r.Body)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
 
-	reader := io.NopCloser(bytes.NewBuffer(rBodyBytes))
+	reader := io.NopCloser(bytes.NewBuffer(b))
 	r.Body = reader
 	// [*] END
 
 	decoder := json.NewDecoder(r.Body)
-	var updateTaskParams domain.UpdateTaskParams
-	err = decoder.Decode(&updateTaskParams)
+	var params domain.UpdateTaskParams
+	err = decoder.Decode(&params)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("requestBody", string(rBodyBytes)). // Raw string
-			Msg("Updating task error")
+			Str("body", string(b)). // Raw string
+			Msg("Updating t error")
 		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
@@ -150,42 +150,42 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		Dict("http_rest.UpdateTask_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			RawJSON("requestBody", rBodyBytes)).
+			RawJSON("body", b)).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
-	updateTaskParams.ID = taskId
-	task, err := tc.TaskService.UpdateTask(ctx, updateTaskParams)
+	params.ID = id
+	t, err := tc.Ts.UpdateTask(ctx, params)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error updating task")
 		return
 	}
 
-	RespondWithJson(w, http.StatusOK, task)
+	RespondWithJson(w, http.StatusOK, t)
 }
 
 func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
 
 	// [*] START: Reading r.Body data, and restoring it for further usage
-	rBodyBytes, err := io.ReadAll(r.Body)
+	b, err := io.ReadAll(r.Body)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
 
-	reader := io.NopCloser(bytes.NewBuffer(rBodyBytes))
+	reader := io.NopCloser(bytes.NewBuffer(b))
 	r.Body = reader
 	// [*] END
 	decoder := json.NewDecoder(r.Body)
-	var getTasksByUserIdParams domain.GetTasksByUserIdParams
-	err = decoder.Decode(&getTasksByUserIdParams)
+	var params domain.GetTasksByUserIdParams
+	err = decoder.Decode(&params)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			Str("requestBody", string(rBodyBytes)). // Raw string
+			Str("body", string(b)). // Raw string
 			Msg("Getting task by userId error")
 		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
@@ -196,15 +196,15 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 		Dict("http_rest.GetTasksByUserId_params", zerolog.Dict().
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
-			RawJSON("requestBody", rBodyBytes)).
+			RawJSON("body", b)).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
-	tasks, err := tc.TaskService.GetTasksByUserId(ctx, getTasksByUserIdParams.UserID)
+	ts, err := tc.Ts.GetTasksByUserId(ctx, params.UserID)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Error getting tasks")
 		return
 	}
 
-	RespondWithJson(w, http.StatusOK, tasks)
+	RespondWithJson(w, http.StatusOK, ts)
 }
