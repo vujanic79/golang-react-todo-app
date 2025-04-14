@@ -14,15 +14,15 @@ type CreateTaskStatusParams struct {
 }
 
 type TaskStatusService interface {
-	CreateTaskStatus(ctx context.Context, taskStatusStr string) (taskStatus TaskStatus, err error)
-	GetTaskStatuses(ctx context.Context) (taskStatuses []TaskStatus, err error)
-	GetTaskStatusByStatus(ctx context.Context, taskStatusStr string) (taskStatus TaskStatus, err error)
+	CreateTaskStatus(ctx context.Context, status string) (ts TaskStatus, err error)
+	GetTaskStatuses(ctx context.Context) (tss []TaskStatus, err error)
+	GetTaskStatusByStatus(ctx context.Context, status string) (ts TaskStatus, err error)
 }
 
 type TaskStatusRepository interface {
-	CreateTaskStatus(ctx context.Context, taskStatusStr string) (taskStatus TaskStatus, err error)
-	GetTaskStatuses(ctx context.Context) (taskStatuses []TaskStatus, err error)
-	GetTaskStatusByStatus(ctx context.Context, taskStatusStr string) (taskStatus TaskStatus, err error)
+	CreateTaskStatus(ctx context.Context, status string) (ts TaskStatus, err error)
+	GetTaskStatuses(ctx context.Context) (tss []TaskStatus, err error)
+	GetTaskStatusByStatus(ctx context.Context, status string) (ts TaskStatus, err error)
 }
 
 type TaskStatusController interface {

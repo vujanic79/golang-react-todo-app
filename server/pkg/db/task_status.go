@@ -15,27 +15,27 @@ type TaskStatusRepository struct {
 
 var _ domain.TaskStatusRepository = (*TaskStatusRepository)(nil)
 
-func NewTaskStatusRepository(db *database.Queries) *TaskStatusRepository {
+func NewTaskStatusRepository(db *database.Queries) (tsr *TaskStatusRepository) {
 	return &TaskStatusRepository{Db: db}
 }
 
-func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
+func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	dbTaskStatus, err := tsr.Db.CreateTaskStatus(ctx, taskStatusStr)
+	dbStatus, err := tsr.Db.CreateTaskStatus(ctx, status)
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.CreateTaskStatus_params", zerolog.Dict().
-				Str("taskStatusStr", taskStatusStr)).
+				Str("status", status)).
 			Msg("Creating task status error")
 	}
 	// [*] END
-	return domain.TaskStatus{Status: dbTaskStatus}, err
+	return domain.TaskStatus{Status: dbStatus}, err
 }
 
-func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (taskStatuses []domain.TaskStatus, err error) {
+func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	dbTaskStatuses, err := tsr.Db.GetTaskStatuses(ctx)
+	dbTss, err := tsr.Db.GetTaskStatuses(ctx)
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
@@ -43,31 +43,31 @@ func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (taskStatu
 			Msg("Getting task statuses from database error")
 	}
 	// [*] END
-	return mapDbTaskStatusesToTaskStatuses(dbTaskStatuses), err
+	return mapDbTaskStatusesToTaskStatuses(dbTss), err
 }
 
-func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, taskStatusStr string) (taskStatus domain.TaskStatus, err error) {
+func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	dbTaskStatus, err := tsr.Db.GetTaskStatusByStatus(ctx, taskStatusStr)
+	dbTs, err := tsr.Db.GetTaskStatusByStatus(ctx, status)
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.GetTaskStatusByStatus_params", zerolog.Dict().
-				Str("taskStatusStr", taskStatusStr)).
+				Str("status", status)).
 			Msg("Getting task status from database error")
 	}
 	// [*] END
-	return mapDbTaskStatusToTaskStatus(dbTaskStatus), err
+	return mapDbTaskStatusToTaskStatus(dbTs), err
 }
 
-func mapDbTaskStatusToTaskStatus(dbTask string) domain.TaskStatus {
-	return domain.TaskStatus{Status: dbTask}
+func mapDbTaskStatusToTaskStatus(dbTs string) (ts domain.TaskStatus) {
+	return domain.TaskStatus{Status: dbTs}
 }
 
-func mapDbTaskStatusesToTaskStatuses(dbTaskStatuses []string) (taskStatuses []domain.TaskStatus) {
-	taskStatuses = make([]domain.TaskStatus, len(dbTaskStatuses))
-	for index, taskStatus := range dbTaskStatuses {
-		taskStatuses[index] = mapDbTaskStatusToTaskStatus(taskStatus)
+func mapDbTaskStatusesToTaskStatuses(dbTss []string) (tss []domain.TaskStatus) {
+	tss = make([]domain.TaskStatus, len(dbTss))
+	for index, taskStatus := range dbTss {
+		tss[index] = mapDbTaskStatusToTaskStatus(taskStatus)
 	}
-	return taskStatuses
+	return tss
 }
