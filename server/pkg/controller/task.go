@@ -1,4 +1,4 @@
-package http_rest
+package controller
 
 import (
 	"encoding/json"
@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/controller/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
-	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 	"net/http"
 )
@@ -49,7 +49,7 @@ func (tc *TaskController) CreateTask(
 	}
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "CreateTask").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).
@@ -86,7 +86,7 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "DeleteTask").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).
@@ -135,7 +135,7 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "UpdateTask").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).
@@ -177,7 +177,7 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 	}
 
 	l = l.With().
-		Dict("http_rest.GetTasksByUserId_params", zerolog.Dict().
+		Dict("controller.GetTasksByUserId_params", zerolog.Dict().
 			Str("func", "GetTasksByUserId").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).

@@ -1,11 +1,11 @@
-package http_rest
+package controller
 
 import (
 	"encoding/json"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/controller/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
-	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 	"net/http"
 )
@@ -43,7 +43,7 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "CreateUser").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).

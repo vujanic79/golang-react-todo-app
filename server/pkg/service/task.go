@@ -1,4 +1,4 @@
-package app
+package service
 
 import (
 	"context"
@@ -22,7 +22,7 @@ func (ts TaskService) CreateTask(ctx context.Context, userId uuid.UUID, params d
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "CreateTask").
 			Dict("params", zerolog.Dict().
 				Interface("userId", userId).
@@ -37,7 +37,7 @@ func (ts TaskService) DeleteTask(ctx context.Context, id uuid.UUID) (err error) 
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "DeleteTask").
 			Dict("params", zerolog.Dict().
 				Interface("id", id))).
@@ -51,7 +51,7 @@ func (ts TaskService) UpdateTask(ctx context.Context, params domain.UpdateTaskPa
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "UpdateTask").
 			Object("params", params)).
 		Logger()
@@ -64,7 +64,7 @@ func (ts TaskService) GetTasksByUserId(ctx context.Context, id uuid.UUID) (tasks
 	l := logger.FromContext(ctx)
 
 	l = l.With().
-		Dict("app.params", zerolog.Dict().
+		Dict("service.params", zerolog.Dict().
 			Str("func", "GetTasksByUserId").
 			Dict("params", zerolog.Dict().
 				Interface("userId", id))).

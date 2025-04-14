@@ -1,12 +1,12 @@
-package http_rest
+package controller
 
 import (
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
+	"github.com/vujanic79/golang-react-todo-app/pkg/controller/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
-	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
 	"net/http"
 )
@@ -44,7 +44,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 	}
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "CreateTaskStatus").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).
@@ -66,7 +66,7 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 	l := logger.Get()
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "GetTaskStatuses").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).
@@ -88,7 +88,7 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 	status := chi.URLParam(r, "taskStatus")
 
 	l = l.With().
-		Dict("http_rest.params", zerolog.Dict().
+		Dict("controller.params", zerolog.Dict().
 			Str("func", "GetTaskStatusByStatus").
 			Dict("params", zerolog.Dict().
 				Str("url", r.URL.RequestURI()).

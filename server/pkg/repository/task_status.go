@@ -25,7 +25,7 @@ func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, status st
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "CreateTaskStatus").
 				Dict("params", zerolog.Dict().
 					Str("status", status))).
@@ -41,7 +41,7 @@ func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []dom
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "GetTaskStatuses").
 				Dict("params", zerolog.Dict())).
 			Msg("Getting task statuses from database error")
@@ -56,7 +56,7 @@ func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, stat
 
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.params", zerolog.Dict().
+			Dict("repository.params", zerolog.Dict().
 				Str("func", "GetTaskStatusByStatus").
 				Dict("params", zerolog.Dict().
 					Str("status", status))).
