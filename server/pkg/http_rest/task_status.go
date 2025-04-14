@@ -1,14 +1,13 @@
 package http_rest
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
+	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
-	"io"
 	"net/http"
 )
 
@@ -25,17 +24,11 @@ func NewTaskStatusController(tss domain.TaskStatusService) (tsc TaskStatusContro
 func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
 
-	// [*] START: Reading r.Body data, and restoring it for further usage
-	b, err := io.ReadAll(r.Body)
+	b, err := util.ReadBody(r)
 	if err != nil {
-		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
-
-	reader := io.NopCloser(bytes.NewBuffer(b))
-	r.Body = reader
-	// [*] END
 
 	decoder := json.NewDecoder(r.Body)
 	var params domain.CreateTaskStatusParams
@@ -46,7 +39,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
 			Msg("Creating task status error")
-		RespondWithError(w, http.StatusBadRequest, "Error parsing task status data from the body")
+		util.RespondWithError(w, http.StatusBadRequest, "Error parsing task status data from the body")
 		return
 	}
 
@@ -63,11 +56,11 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 	// [*] END
 	ts, err := tsc.Tss.CreateTaskStatus(ctx, params.Status)
 	if err != nil {
-		RespondWithError(w, http.StatusInternalServerError, "Error creating task status")
+		util.RespondWithError(w, http.StatusInternalServerError, "Error creating task status")
 		return
 	}
 
-	RespondWithJson(w, http.StatusCreated, ts)
+	util.RespondWithJson(w, http.StatusCreated, ts)
 }
 
 func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.Request) {
@@ -85,11 +78,11 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 
 	tss, err := tsc.Tss.GetTaskStatuses(ctx)
 	if err != nil {
-		RespondWithError(w, http.StatusInternalServerError, "Error getting task statuses")
+		util.RespondWithError(w, http.StatusInternalServerError, "Error getting task statuses")
 		return
 	}
 
-	RespondWithJson(w, http.StatusOK, tss)
+	util.RespondWithJson(w, http.StatusOK, tss)
 }
 
 func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r *http.Request) {
@@ -110,9 +103,9 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 
 	ts, err := tsc.Tss.GetTaskStatusByStatus(ctx, status)
 	if err != nil {
-		RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
+		util.RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
 		return
 	}
 
-	RespondWithJson(w, http.StatusOK, ts)
+	util.RespondWithJson(w, http.StatusOK, ts)
 }

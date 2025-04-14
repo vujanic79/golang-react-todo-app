@@ -1,4 +1,4 @@
-package http_rest
+package util
 
 import (
 	"encoding/json"

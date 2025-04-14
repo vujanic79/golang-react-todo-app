@@ -1,13 +1,12 @@
 package http_rest
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/vujanic79/golang-react-todo-app/pkg/domain"
+	"github.com/vujanic79/golang-react-todo-app/pkg/http_rest/util"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
-	"io"
 	"net/http"
 )
 
@@ -24,17 +23,11 @@ func NewUserController(us domain.UserService) (uc UserController) {
 func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
 
-	// [*] START: Reading r.Body data, and restoring it for further usage
-	b, err := io.ReadAll(r.Body)
+	b, err := util.ReadBody(r)
 	if err != nil {
-		l.Error().Stack().Err(errors.WithStack(err)).Msg("Reading request body error")
 		http.Error(w, "Could not read user input", http.StatusInternalServerError)
 		return
 	}
-
-	reader := io.NopCloser(bytes.NewBuffer(b))
-	r.Body = reader
-	// [*] END
 
 	decoder := json.NewDecoder(r.Body)
 	var params domain.CreateUserParams
@@ -45,7 +38,7 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
 			Msg("Creating user error")
-		RespondWithError(w, http.StatusBadRequest, err.Error())
+		util.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -63,9 +56,9 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	u, err := uc.Us.CreateUser(ctx, params)
 	if err != nil {
-		RespondWithError(w, http.StatusInternalServerError, err.Error())
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	RespondWithJson(w, http.StatusCreated, u)
+	util.RespondWithJson(w, http.StatusCreated, u)
 }
