@@ -35,6 +35,17 @@ func Get() zerolog.Logger {
 			},
 			FormatErrFieldName:  func(i interface{}) string { return fmt.Sprintf("*** %s=", i) },
 			FormatErrFieldValue: func(i interface{}) string { return fmt.Sprintf("%s ***", i) },
+			FieldsOrder: []string{
+				"timestamp",
+				"level",
+				"msg",
+				"error",
+				"db.params",
+				"app.params",
+				"http_rest.params",
+				"stack",
+				"go_version",
+			},
 		}
 
 		log = zerolog.New(output).

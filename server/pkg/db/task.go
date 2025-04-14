@@ -31,8 +31,10 @@ func (tr *TaskRepository) CreateTask(
 	parsedTime, err := time.Parse(layout, params.CompleteDeadline)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.CreateTask_params", zerolog.Dict().
-				Str("completeDeadline", params.CompleteDeadline)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "CreateTask").
+				Dict("params", zerolog.Dict().
+					Str("completeDeadline", params.CompleteDeadline))).
 			Msg("Parsing completeDeadline error")
 		return task, err
 	}
@@ -51,9 +53,11 @@ func (tr *TaskRepository) CreateTask(
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.CreateTask_params", zerolog.Dict().
-				Interface("userId", userId).
-				Object("params", params)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "CreateTask").
+				Dict("params", zerolog.Dict().
+					Interface("userId", userId).
+					Object("params", params))).
 			Msg("Creating task error")
 	}
 	// [*] END
@@ -65,8 +69,10 @@ func (tr *TaskRepository) DeleteTask(ctx context.Context, id uuid.UUID) (err err
 	err = tr.Db.DeleteTask(ctx, id)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.DeleteTask_params", zerolog.Dict().
-				Interface("id", id)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "DeleteTask").
+				Dict("params", zerolog.Dict().
+					Interface("id", id))).
 			Msg("Deleting task error")
 	}
 	return err
@@ -78,8 +84,10 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 	parsedTime, err := time.Parse(layout, params.CompleteDeadline)
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.UpdateTask_params", zerolog.Dict().
-				Str("completeDeadline", params.CompleteDeadline)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "UpdateTask").
+				Dict("params", zerolog.Dict().
+					Str("completeDeadline", params.CompleteDeadline))).
 			Msg("Parsing completeDeadline error")
 		return t, err
 	}
@@ -94,8 +102,10 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.UpdateTask_params", zerolog.Dict().
-				Object("params", params)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "UpdateTask").
+				Dict("params", zerolog.Dict().
+					Object("params", params))).
 			Msg("Updating task error")
 	}
 	// [*] END
@@ -107,8 +117,10 @@ func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (t
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.GetTaskByUserId_params", zerolog.Dict().
-				Interface("userId", id)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "GetTasksByUserId").
+				Dict("params", zerolog.Dict().
+					Interface("userId", id))).
 			Msg("Getting tasks by userId error")
 	}
 	// [*] END

@@ -22,8 +22,9 @@ func (us *UserService) CreateUser(ctx context.Context, params domain.CreateUserP
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.CreateUser_params", zerolog.Dict().
-			Object("create_user_params", params)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "CreateUser").
+			Object("params", params)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END
@@ -35,8 +36,10 @@ func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (id u
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.GetUserIdByEmail_params", zerolog.Dict().
-			Str("email", email)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetUserUserIdByEmail").
+			Dict("params", zerolog.Dict().
+				Str("email", email))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END

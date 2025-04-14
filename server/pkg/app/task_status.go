@@ -21,8 +21,10 @@ func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, status strin
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.CreateTaskStatus_params", zerolog.Dict().
-			Str("status", status)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "CreateTaskStatus").
+			Dict("params", zerolog.Dict().
+				Str("status", status))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END
@@ -34,7 +36,9 @@ func (tss *TaskStatusService) GetTaskStatuses(ctx context.Context) (taskStatuses
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.GetTaskStatusByStatus_params", zerolog.Dict()).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetTaskStatuses").
+			Dict("params", zerolog.Dict())).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END
@@ -46,8 +50,10 @@ func (tss *TaskStatusService) GetTaskStatusByStatus(ctx context.Context, status 
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.GetTaskStatusByStatus_params", zerolog.Dict().
-			Str("status", status)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetTaskStatusByStatus").
+			Dict("params", zerolog.Dict().
+				Str("status", status))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END

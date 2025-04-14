@@ -22,9 +22,11 @@ func (ts TaskService) CreateTask(ctx context.Context, userId uuid.UUID, params d
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.CreateTask_params", zerolog.Dict().
-			Interface("userId", userId).
-			Object("params", params)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "CreateTask").
+			Dict("params", zerolog.Dict().
+				Interface("userId", userId).
+				Object("params", params))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END
@@ -35,8 +37,10 @@ func (ts TaskService) DeleteTask(ctx context.Context, id uuid.UUID) (err error) 
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.DeleteTask_params", zerolog.Dict().
-			Interface("id", id)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "DeleteTask").
+			Dict("params", zerolog.Dict().
+				Interface("id", id))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END
@@ -47,7 +51,8 @@ func (ts TaskService) UpdateTask(ctx context.Context, params domain.UpdateTaskPa
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.UpdateTask_params", zerolog.Dict().
+		Dict("app.params", zerolog.Dict().
+			Str("func", "UpdateTask").
 			Object("params", params)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
@@ -59,8 +64,10 @@ func (ts TaskService) GetTasksByUserId(ctx context.Context, id uuid.UUID) (tasks
 	l := logger.FromContext(ctx)
 	// [*] START - Add service data to context
 	l = l.With().
-		Dict("app.GetTasksByUserId_params", zerolog.Dict().
-			Interface("userId", id)).
+		Dict("app.params", zerolog.Dict().
+			Str("func", "GetTasksByUserId").
+			Dict("params", zerolog.Dict().
+				Interface("userId", id))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
 	// [*] END

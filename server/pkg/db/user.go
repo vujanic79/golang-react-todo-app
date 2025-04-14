@@ -34,7 +34,8 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.CreateUser_params", zerolog.Dict().
+			Dict("db.params", zerolog.Dict().
+				Str("func", "CreateUser").
 				Object("params", params)).
 			Msg("Creating user error")
 	}
@@ -48,8 +49,10 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (i
 	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
-			Dict("db.GetUserIdByEmail_params", zerolog.Dict().
-				Str("email", email)).
+			Dict("db.params", zerolog.Dict().
+				Str("func", "GetUserUserIdByEmail").
+				Dict("params", zerolog.Dict().
+					Str("email", email))).
 			Msg("Getting user id by email error")
 	}
 	// [*] END

@@ -51,10 +51,12 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.CreateUser_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			RawJSON("body", b)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "CreateUser").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END

@@ -52,10 +52,12 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.CreateTaskStatus_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			RawJSON("body", b)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "CreateTaskStatus").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
@@ -72,9 +74,11 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 	l := logger.Get()
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.GetTaskStatuses_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "GetTaskStatuses").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
@@ -94,10 +98,12 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.CreateTaskStatusByStatus_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			Str("urlParam", status)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "GetTaskStatusByStatus").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				Str("urlParam", status))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END

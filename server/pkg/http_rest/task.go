@@ -57,10 +57,12 @@ func (tc *TaskController) CreateTask(
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.CreateTask_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			RawJSON("body", b)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "CreateTask").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
@@ -93,10 +95,12 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.DeleteTask_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			Str("urlParam", idStr)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "DeleteTask").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				Str("urlParam", idStr))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
@@ -147,10 +151,12 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	// [*] START - Add http request data to context
 	l = l.With().
-		Dict("http_rest.UpdateTask_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			RawJSON("body", b)).
+		Dict("http_rest.params", zerolog.Dict().
+			Str("func", "UpdateTask").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
@@ -194,9 +200,11 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.GetTasksByUserId_params", zerolog.Dict().
-			Str("url", r.URL.RequestURI()).
-			Str("method", r.Method).
-			RawJSON("body", b)).
+			Str("func", "GetTasksByUserId").
+			Dict("params", zerolog.Dict().
+				Str("url", r.URL.RequestURI()).
+				Str("method", r.Method).
+				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
 	// [*] END
