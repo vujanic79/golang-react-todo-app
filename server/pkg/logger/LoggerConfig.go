@@ -21,8 +21,8 @@ func Get() zerolog.Logger {
 		zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 		zerolog.TimeFieldFormat = "2006-01-02T15:04:05.999999Z"
 
-		logLevelStr := os.Getenv("LOG_LEVEL")
-		logLevel := getLogLevel(logLevelStr)
+		levelStr := os.Getenv("LOG_LEVEL")
+		level := getLogLevel(levelStr)
 
 		var output io.Writer = zerolog.ConsoleWriter{
 			Out:        os.Stdout,
@@ -48,8 +48,13 @@ func Get() zerolog.Logger {
 			},
 		}
 
+		env := os.Getenv("APP_ENV")
+		if env == "production" {
+			output = os.Stderr
+		}
+
 		log = zerolog.New(output).
-			Level(logLevel).
+			Level(level).
 			With().
 			Timestamp().
 			Str("go_version", runtime.Version()).
