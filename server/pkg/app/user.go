@@ -20,21 +20,21 @@ func NewUserService(ur domain.UserRepository) (us *UserService) {
 
 func (us *UserService) CreateUser(ctx context.Context, params domain.CreateUserParams) (u domain.User, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
 		Dict("app.params", zerolog.Dict().
 			Str("func", "CreateUser").
 			Object("params", params)).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
+
 	u, err = us.Ur.CreateUser(ctx, params)
 	return u, err
 }
 
 func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
 		Dict("app.params", zerolog.Dict().
 			Str("func", "GetUserUserIdByEmail").
@@ -42,7 +42,7 @@ func (us *UserService) GetUserIdByEmail(ctx context.Context, email string) (id u
 				Str("email", email))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
+
 	id, err = us.Ur.GetUserIdByEmail(ctx, email)
 	return id, err
 }

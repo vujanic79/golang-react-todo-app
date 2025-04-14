@@ -43,7 +43,6 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 		return
 	}
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "CreateTaskStatus").
@@ -53,7 +52,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
+
 	ts, err := tsc.Tss.CreateTaskStatus(ctx, params.Status)
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, "Error creating task status")
@@ -65,7 +64,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 
 func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
-	// [*] START - Add http request data to context
+
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "GetTaskStatuses").
@@ -74,7 +73,6 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 				Str("method", r.Method))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
 
 	tss, err := tsc.Tss.GetTaskStatuses(ctx)
 	if err != nil {
@@ -89,7 +87,6 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 	l := logger.Get()
 	status := chi.URLParam(r, "taskStatus")
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "GetTaskStatusByStatus").
@@ -99,7 +96,6 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 				Str("urlParam", status))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
 
 	ts, err := tsc.Tss.GetTaskStatusByStatus(ctx, status)
 	if err != nil {

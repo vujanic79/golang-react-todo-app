@@ -48,7 +48,6 @@ func (tc *TaskController) CreateTask(
 		return
 	}
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "CreateTask").
@@ -58,7 +57,7 @@ func (tc *TaskController) CreateTask(
 				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
+
 	userId, err := tc.Us.GetUserIdByEmail(ctx, params.UserEmail)
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
@@ -86,7 +85,6 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "DeleteTask").
@@ -96,7 +94,7 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 				Str("urlParam", idStr))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
+
 	err = tc.Ts.DeleteTask(ctx, id)
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, "Error deleting task")
@@ -136,7 +134,6 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.params", zerolog.Dict().
 			Str("func", "UpdateTask").
@@ -146,7 +143,7 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
+
 	params.ID = id
 	t, err := tc.Ts.UpdateTask(ctx, params)
 	if err != nil {
@@ -179,7 +176,6 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// [*] START - Add http request data to context
 	l = l.With().
 		Dict("http_rest.GetTasksByUserId_params", zerolog.Dict().
 			Str("func", "GetTasksByUserId").
@@ -189,7 +185,7 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 				RawJSON("body", b))).
 		Logger()
 	ctx := logger.WithLogger(r.Context(), l)
-	// [*] END
+
 	ts, err := tc.Ts.GetTasksByUserId(ctx, params.UserID)
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, "Error getting tasks")

@@ -31,7 +31,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 		LastName:  params.LastName,
 		Email:     params.Email,
 	})
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -39,14 +39,14 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 				Object("params", params)).
 			Msg("Creating user error")
 	}
-	// [*] END
+
 	return mapDbUserToUser(dbU), err
 }
 
 func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error) {
 	l := logger.FromContext(ctx)
 	id, err = ur.Db.GetUserIdByEmail(ctx, email)
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -55,7 +55,7 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (i
 					Str("email", email))).
 			Msg("Getting user id by email error")
 	}
-	// [*] END
+
 	return id, err
 }
 

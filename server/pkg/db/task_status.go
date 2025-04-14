@@ -22,7 +22,7 @@ func NewTaskStatusRepository(db *database.Queries) (tsr *TaskStatusRepository) {
 func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
 	dbStatus, err := tsr.Db.CreateTaskStatus(ctx, status)
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -31,14 +31,14 @@ func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, status st
 					Str("status", status))).
 			Msg("Creating task status error")
 	}
-	// [*] END
+
 	return domain.TaskStatus{Status: dbStatus}, err
 }
 
 func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
 	dbTss, err := tsr.Db.GetTaskStatuses(ctx)
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -46,14 +46,14 @@ func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []dom
 				Dict("params", zerolog.Dict())).
 			Msg("Getting task statuses from database error")
 	}
-	// [*] END
+
 	return mapDbTaskStatusesToTaskStatuses(dbTss), err
 }
 
 func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
 	dbTs, err := tsr.Db.GetTaskStatusByStatus(ctx, status)
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -62,7 +62,7 @@ func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, stat
 					Str("status", status))).
 			Msg("Getting task status from database error")
 	}
-	// [*] END
+
 	return mapDbTaskStatusToTaskStatus(dbTs), err
 }
 

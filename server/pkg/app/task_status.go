@@ -19,7 +19,7 @@ func NewTaskStatusService(tsr domain.TaskStatusRepository) (tss *TaskStatusServi
 
 func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
 		Dict("app.params", zerolog.Dict().
 			Str("func", "CreateTaskStatus").
@@ -27,28 +27,28 @@ func (tss *TaskStatusService) CreateTaskStatus(ctx context.Context, status strin
 				Str("status", status))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
+
 	ts, err = tss.Tsr.CreateTaskStatus(ctx, status)
 	return ts, err
 }
 
 func (tss *TaskStatusService) GetTaskStatuses(ctx context.Context) (taskStatuses []domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
 		Dict("app.params", zerolog.Dict().
 			Str("func", "GetTaskStatuses").
 			Dict("params", zerolog.Dict())).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
+
 	taskStatuses, err = tss.Tsr.GetTaskStatuses(ctx)
 	return taskStatuses, err
 }
 
 func (tss *TaskStatusService) GetTaskStatusByStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
 	l := logger.FromContext(ctx)
-	// [*] START - Add service data to context
+
 	l = l.With().
 		Dict("app.params", zerolog.Dict().
 			Str("func", "GetTaskStatusByStatus").
@@ -56,7 +56,7 @@ func (tss *TaskStatusService) GetTaskStatusByStatus(ctx context.Context, status 
 				Str("status", status))).
 		Logger()
 	ctx = logger.WithLogger(ctx, l)
-	// [*] END
+
 	ts, err = tss.Tsr.GetTaskStatusByStatus(ctx, status)
 	return ts, err
 }

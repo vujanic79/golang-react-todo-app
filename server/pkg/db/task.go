@@ -50,7 +50,6 @@ func (tr *TaskRepository) CreateTask(
 		UserID:           userId,
 	})
 
-	// [*] START - Log repository data with context
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -60,13 +59,14 @@ func (tr *TaskRepository) CreateTask(
 					Object("params", params))).
 			Msg("Creating task error")
 	}
-	// [*] END
+
 	return mapDbTaskToTask(dbT), err
 }
 
 func (tr *TaskRepository) DeleteTask(ctx context.Context, id uuid.UUID) (err error) {
 	l := logger.FromContext(ctx)
 	err = tr.Db.DeleteTask(ctx, id)
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -75,6 +75,7 @@ func (tr *TaskRepository) DeleteTask(ctx context.Context, id uuid.UUID) (err err
 					Interface("id", id))).
 			Msg("Deleting task error")
 	}
+
 	return err
 }
 
@@ -82,6 +83,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 	l := logger.FromContext(ctx)
 	layout := "2006-01-02T15:04:05.999999Z"
 	parsedTime, err := time.Parse(layout, params.CompleteDeadline)
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -99,7 +101,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 		CompleteDeadline: parsedTime,
 		Status:           strings.ToUpper(params.Status),
 	})
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -108,13 +110,13 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 					Object("params", params))).
 			Msg("Updating task error")
 	}
-	// [*] END
+
 	return mapDbTaskToTask(dbT), err
 }
 func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (ts []domain.Task, err error) {
 	l := logger.FromContext(ctx)
 	dbTs, err := tr.Db.GetTasksByUserId(ctx, id)
-	// [*] START - Log repository data with context
+
 	if err != nil {
 		l.Error().Stack().Err(errors.WithStack(err)).
 			Dict("db.params", zerolog.Dict().
@@ -123,7 +125,7 @@ func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (t
 					Interface("userId", id))).
 			Msg("Getting tasks by userId error")
 	}
-	// [*] END
+
 	return mapDbTasksToTasks(dbTs), err
 }
 
