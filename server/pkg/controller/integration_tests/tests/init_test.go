@@ -1,4 +1,4 @@
-package integration_tests
+package tests
 
 import (
 	"database/sql"
@@ -66,8 +66,8 @@ func deployPostgres(pool *dockertest.Pool) (*dockertest.Resource, error) {
 	randPass := uuid.New().String()
 	randUser := uuid.New().String()
 	pg, err := pool.BuildAndRunWithBuildOptions(&dockertest.BuildOptions{
-		ContextDir: ".",
-		Dockerfile: "Dockerfile_test_db",
+		ContextDir: "../",
+		Dockerfile: "./Dockerfile_test_db",
 	}, &dockertest.RunOptions{
 		Name: "golang-react-todo-app-db-test",
 		Env: []string{
@@ -153,7 +153,7 @@ func setEnvVars(randUser string, randPass string) (err error) {
 
 func deployApi(pool *dockertest.Pool) (api *dockertest.Resource, err error) {
 	api, err = pool.BuildAndRunWithBuildOptions(&dockertest.BuildOptions{
-		ContextDir: "../../..",
+		ContextDir: "../../../..",
 		Dockerfile: "./pkg/controller/integration_tests/Dockerfile_test_api",
 	}, &dockertest.RunOptions{
 		Name:         "golang-react-todo-app-api-test",

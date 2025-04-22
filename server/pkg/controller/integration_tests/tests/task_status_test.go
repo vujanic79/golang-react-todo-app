@@ -1,4 +1,4 @@
-package integration_tests
+package tests
 
 import (
 	"bytes"
@@ -10,23 +10,6 @@ import (
 	"testing"
 )
 
-func TestHealthRoute(t *testing.T) {
-	p := os.Getenv("PORT")
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://127.0.0.1:%s/todo/healthz", p), nil)
-	if err != nil {
-		t.Fatalf("Could not create req: %v", err)
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Fatalf("Could not make req: %v", err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("Expected status 200, got %d", res.StatusCode)
-	}
-}
-
 func TestGetTaskStatuses(t *testing.T) {
 	p := os.Getenv("PORT")
 
@@ -36,14 +19,14 @@ func TestGetTaskStatuses(t *testing.T) {
 
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
-		panic(err)
+		t.Fatalf("Could not marshal body: %v", err)
 	}
 
 	req, err := http.NewRequest("POST",
 		fmt.Sprintf("http://127.0.0.1:%s/todo/task-status", p),
 		bytes.NewBuffer(jsonBody))
 	if err != nil {
-		t.Fatalf("Error creating POST request: %v", err)
+		t.Fatalf("Creating POST request error: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -51,20 +34,19 @@ func TestGetTaskStatuses(t *testing.T) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		t.Fatalf("Error executing POST request: %v", err)
+		t.Fatalf("Executing POST request error: %v", err)
 	}
+
 	defer func(body io.ReadCloser) {
 		err := body.Close()
 		if err != nil {
-			t.Errorf("Error closing response body: %v", err)
+			t.Errorf("Closing response body error: %v", err)
 		}
 	}(resp.Body)
 
-	fmt.Println("Status Code:", resp.StatusCode)
-
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		t.Fatalf("Could not read response body: %v", err)
+		t.Fatalf("Reading response body error: %v", err)
 	}
 	bodyString := string(bodyBytes)
 	t.Logf("Response body: %s", bodyString)
