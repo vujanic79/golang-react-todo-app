@@ -3,7 +3,7 @@ services:
     build:
       context: .
       target: ${APP_ENV}
-    container_name: golang-react-todo-service-backend
+    container_name: golang-react-todo-app-backend
     env_file:
       - ./.env
     environment:
@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: ${DB_USER}
     ports:
       - "8000:8000"
-    command: ["/service/bin/golang-react-todo-service"]
+    command: ["/app/bin/golang-react-todo-app"]
     depends_on:
       goose:
         condition: service_completed_successfully
@@ -24,7 +24,7 @@ services:
   postgres:
     image: postgres:bookworm
     restart: always
-    container_name: golang-react-todo-service-db
+    container_name: golang-react-todo-app-db
     env_file:
       - ./.env
     environment:
@@ -36,8 +36,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    ports:
-      - "5433:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
@@ -47,7 +45,7 @@ services:
     build:
       context: .
       dockerfile: ./pkg/sql/schema/goose_docker_config/Dockerfile
-    container_name: golang-react-todo-service-migrations
+    container_name: golang-react-todo-app-migrations
     env_file:
       - ./.env
     environment:

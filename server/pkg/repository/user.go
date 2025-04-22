@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 			Msg("Creating user error")
 	}
 
-	return mapDbUserToUser(dbU), err
+	return MapDbUserToUser(dbU), err
 }
 
 func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (id uuid.UUID, err error) {
@@ -59,7 +59,7 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (i
 	return id, err
 }
 
-func mapDbUserToUser(dbU database.AppUser) (u domain.User) {
+func MapDbUserToUser(dbU database.AppUser) (u domain.User) {
 	return domain.User{
 		ID:        dbU.ID,
 		CreatedAt: dbU.CreatedAt,

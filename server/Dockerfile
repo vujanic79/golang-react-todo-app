@@ -17,7 +17,7 @@ FROM base AS development
 
 WORKDIR /app/cmd/web
 
-RUN go build -o /service/bin/golang-react-todo-service
+RUN go build -o /app/bin/golang-react-todo-app
 
 WORKDIR /app
 
@@ -30,7 +30,7 @@ FROM base AS builder
 
 WORKDIR /app/cmd/web
 
-RUN CGO_ENABLED=0 go build -o /service/bin/golang-react-todo-service
+RUN CGO_ENABLED=0 go build -o /app/bin/golang-react-todo-app
 
 # ------------------------------
 # Final production image
@@ -40,6 +40,6 @@ FROM scratch AS production
 WORKDIR /app
 
 COPY --from=builder /app/bin/golang-react-todo-app ./bin
-COPY pkg/repository/data/ ./pkg/db/data/
+COPY pkg/repository/data/ ./pkg/repository/data/
 
 EXPOSE 8000
