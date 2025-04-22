@@ -11,9 +11,8 @@ import (
 )
 
 func TestHealthRoute(t *testing.T) {
-	//req, err := http.NewRequest("GET", "http://127.0.0.1:8000/todo/healthz", nil)
-	port := os.Getenv("API_HOST_PORT")
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://127.0.0.1:%s/todo/healthz", port), nil)
+	p := os.Getenv("PORT")
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://127.0.0.1:%s/todo/healthz", p), nil)
 	if err != nil {
 		t.Fatalf("Could not create req: %v", err)
 	}
@@ -29,7 +28,7 @@ func TestHealthRoute(t *testing.T) {
 }
 
 func TestGetTaskStatuses(t *testing.T) {
-	port := os.Getenv("API_HOST_PORT")
+	p := os.Getenv("PORT")
 
 	body := map[string]string{
 		"status": "ACTIVIE",
@@ -41,7 +40,7 @@ func TestGetTaskStatuses(t *testing.T) {
 	}
 
 	req, err := http.NewRequest("POST",
-		fmt.Sprintf("http://127.0.0.1:%s/todo/task-status", port),
+		fmt.Sprintf("http://127.0.0.1:%s/todo/task-status", p),
 		bytes.NewBuffer(jsonBody))
 	if err != nil {
 		t.Fatalf("Error creating POST request: %v", err)
@@ -69,28 +68,4 @@ func TestGetTaskStatuses(t *testing.T) {
 	}
 	bodyString := string(bodyBytes)
 	t.Logf("Response body: %s", bodyString)
-
-	//port := os.Getenv("API_HOST_PORT")
-	//req, err := http.NewRequest("POST", fmt.Sprintf("http://127.0.0.1:%s/todo/task-status", port), nil)
-	//if err != nil {
-	//	t.Fatalf("Could not create req: %v", err)
-	//}
-	//
-	//res, err := http.DefaultClient.Do(req)
-	//if err != nil {
-	//	t.Fatalf("Could not make req: %v", err)
-	//}
-	//
-	//t.Logf("Response status: %d", res.StatusCode)
-	//
-	//if res.StatusCode != http.StatusOK {
-	//	t.Errorf("Expected status 200, got %d", res.StatusCode)
-	//}
-	//
-	//bodyBytes, err := io.ReadAll(res.Body)
-	//if err != nil {
-	//	t.Fatalf("Could not read response body: %v", err)
-	//}
-	//bodyString := string(bodyBytes)
-	//t.Logf("Response body: %s", bodyString)
 }

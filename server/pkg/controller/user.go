@@ -25,7 +25,7 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	b, err := util.ReadBody(r)
 	if err != nil {
-		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not read user input")
 		return
 	}
 

@@ -26,7 +26,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 
 	b, err := util.ReadBody(r)
 	if err != nil {
-		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not read user input")
 		return
 	}
 
@@ -39,7 +39,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
 			Msg("Creating task status error")
-		util.RespondWithError(w, http.StatusBadRequest, "Error parsing task status data from the body")
+		util.RespondWithError(w, http.StatusBadRequest, "Parsing task status data from the body error")
 		return
 	}
 
@@ -55,7 +55,7 @@ func (tsc *TaskStatusController) CreateTaskStatus(w http.ResponseWriter, r *http
 
 	ts, err := tsc.Tss.CreateTaskStatus(ctx, params.Status)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error creating task status")
+		util.RespondWithError(w, http.StatusInternalServerError, "Creating task status error")
 		return
 	}
 
@@ -76,7 +76,7 @@ func (tsc *TaskStatusController) GetTaskStatuses(w http.ResponseWriter, r *http.
 
 	tss, err := tsc.Tss.GetTaskStatuses(ctx)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error getting task statuses")
+		util.RespondWithError(w, http.StatusInternalServerError, "Getting task statuses error")
 		return
 	}
 

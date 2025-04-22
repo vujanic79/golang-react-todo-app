@@ -39,7 +39,7 @@ FROM scratch AS production
 
 WORKDIR /app
 
-COPY --from=builder /app/bin/golang-react-todo-app ./bin
+COPY --from=builder /app/bin/golang-react-todo-app ./bin/golang-react-todo-app
 COPY pkg/repository/data/ ./pkg/repository/data/
 
 EXPOSE 8000

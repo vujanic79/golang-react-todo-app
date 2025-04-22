@@ -20,8 +20,8 @@ const taskStatusesData = "./pkg/repository/data/task_statuses.csv"
 func main() {
 	l := logger.Get()
 
-	host := os.Getenv("HOST")
-	if host == "" {
+	h := os.Getenv("HOST")
+	if h == "" {
 		err := errors.New("HOST environment variable not set")
 		l.Fatal().Stack().Err(errors.WithStack(err)).
 			Msg("Setting HOST environment variable error")
@@ -73,10 +73,8 @@ func main() {
 	r.Mount("/todo", subR)
 	srv := &http.Server{
 		Handler: r,
-		Addr:    fmt.Sprintf("%s:%s", host, p),
+		Addr:    fmt.Sprintf("%s:%s", h, p),
 	}
-
-	l.Info().Str("host", host).Str("port", p).Msg("Starting server")
 
 	err := srv.ListenAndServe()
 	if err != nil {

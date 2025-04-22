@@ -31,7 +31,7 @@ func (tc *TaskController) CreateTask(
 
 	b, err := util.ReadBody(r)
 	if err != nil {
-		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not read user input")
 		return
 	}
 
@@ -43,7 +43,7 @@ func (tc *TaskController) CreateTask(
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
-			Msg("Creating t error")
+			Msg("Creating task error")
 		util.RespondWithError(w, http.StatusBadRequest, "Parsing task data from the body error")
 		return
 	}
@@ -60,13 +60,13 @@ func (tc *TaskController) CreateTask(
 
 	userId, err := tc.Us.GetUserIdByEmail(ctx, params.UserEmail)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not complete the request")
 		return
 	}
 
 	t, err := tc.Ts.CreateTask(ctx, userId, params)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error creating task")
+		util.RespondWithError(w, http.StatusInternalServerError, "Creating task error")
 		return
 	}
 
@@ -75,6 +75,7 @@ func (tc *TaskController) CreateTask(
 
 func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
+
 	idStr := chi.URLParam(r, "taskId")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -97,7 +98,7 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 	err = tc.Ts.DeleteTask(ctx, id)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error deleting task")
+		util.RespondWithError(w, http.StatusInternalServerError, "Deleting task error")
 		return
 	}
 	util.RespondWithJson(w, http.StatusOK, fmt.Sprintf("Task with id %s successfully deleted", id))
@@ -105,6 +106,7 @@ func (tc *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	l := logger.Get()
+
 	idStr := chi.URLParam(r, "taskId")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -117,7 +119,7 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	b, err := util.ReadBody(r)
 	if err != nil {
-		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not read user input")
 		return
 	}
 
@@ -129,8 +131,8 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 			Str("url", r.URL.RequestURI()).
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
-			Msg("Updating t error")
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+			Msg("Updating task error")
+		util.RespondWithError(w, http.StatusBadRequest, "Parsing task data from the body error")
 		return
 	}
 
@@ -147,7 +149,7 @@ func (tc *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	params.ID = id
 	t, err := tc.Ts.UpdateTask(ctx, params)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error updating task")
+		util.RespondWithError(w, http.StatusInternalServerError, "Updating task error")
 		return
 	}
 
@@ -159,7 +161,7 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 
 	b, err := util.ReadBody(r)
 	if err != nil {
-		http.Error(w, "Could not read user input", http.StatusInternalServerError)
+		util.RespondWithError(w, http.StatusInternalServerError, "Could not read user input")
 		return
 	}
 
@@ -172,7 +174,7 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 			Str("method", r.Method).
 			Str("body", string(b)). // Raw string
 			Msg("Getting task by userId error")
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		util.RespondWithError(w, http.StatusBadRequest, "Parsing task data from the body error")
 		return
 	}
 
@@ -188,7 +190,7 @@ func (tc *TaskController) GetTasksByUserId(w http.ResponseWriter, r *http.Reques
 
 	ts, err := tc.Ts.GetTasksByUserId(ctx, params.UserID)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error getting tasks")
+		util.RespondWithError(w, http.StatusInternalServerError, "Getting tasks error")
 		return
 	}
 
