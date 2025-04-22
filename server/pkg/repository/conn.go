@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"database/sql"
@@ -23,9 +23,10 @@ func GetPostgreSQLConnection() (db *database.Queries) {
 	sslMode := os.Getenv("DB_SSL_MODE")
 
 	dbUrl := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=%s", driver, user, password, host, port, name, sslMode)
+	l.Info().Str("dbUrl", dbUrl).Msg("Connecting to database")
 	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		l.Error().Stack().Err(errors.WithStack(err)).
+		l.Fatal().Stack().Err(errors.WithStack(err)).
 			Dict("connectionParams", zerolog.Dict().
 				Str("driver", driver).
 				Str("host", host).
@@ -35,5 +36,6 @@ func GetPostgreSQLConnection() (db *database.Queries) {
 			Msg("Database connection error")
 	}
 	db = database.New(conn)
+	l.Info().Msg("Database connection established")
 	return db
 }

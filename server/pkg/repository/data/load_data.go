@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/vujanic79/golang-react-todo-app/pkg/internal/database"
 	"github.com/vujanic79/golang-react-todo-app/pkg/logger"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -45,18 +46,23 @@ func LoadDataToDatabase(dbQueries *database.Queries, filePath string) {
 
 	csvData := rows[1:] // Skip header
 
-	// Count existing rows
 	taskStatuses, err := dbQueries.GetTaskStatuses(context.Background())
 	if err != nil {
 		l.Fatal().Stack().Err(errors.WithStack(err)).
 			Msg("Getting task statuses error")
 	}
 
-	if len(csvData) >= len(taskStatuses) {
+	if len(csvData) <= len(taskStatuses) {
 		l.Info().Msg("CSV data already loaded. Skipping insert.")
 		return
 	}
 
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		l.Fatal().Stack().Err(errors.WithStack(err)).Msg("Returning pointer to the start of the file error")
+	}
+
+	l.Info().Str("Ciro", "Ferrara").Msg("Loading task statuses")
 	var entries []TaskStatus
 	err = gocsv.Unmarshal(file, &entries)
 	if err != nil {

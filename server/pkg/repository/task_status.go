@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"context"
@@ -47,7 +47,7 @@ func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []dom
 			Msg("Getting task statuses from database error")
 	}
 
-	return mapDbTaskStatusesToTaskStatuses(dbTss), err
+	return MapDbTaskStatusesToTaskStatuses(dbTss), err
 }
 
 func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, status string) (ts domain.TaskStatus, err error) {
@@ -63,17 +63,17 @@ func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, stat
 			Msg("Getting task status from database error")
 	}
 
-	return mapDbTaskStatusToTaskStatus(dbTs), err
+	return MapDbTaskStatusToTaskStatus(dbTs), err
 }
 
-func mapDbTaskStatusToTaskStatus(dbTs string) (ts domain.TaskStatus) {
+func MapDbTaskStatusToTaskStatus(dbTs string) (ts domain.TaskStatus) {
 	return domain.TaskStatus{Status: dbTs}
 }
 
-func mapDbTaskStatusesToTaskStatuses(dbTss []string) (tss []domain.TaskStatus) {
+func MapDbTaskStatusesToTaskStatuses(dbTss []string) (tss []domain.TaskStatus) {
 	tss = make([]domain.TaskStatus, len(dbTss))
 	for i, taskStatus := range dbTss {
-		tss[i] = mapDbTaskStatusToTaskStatus(taskStatus)
+		tss[i] = MapDbTaskStatusToTaskStatus(taskStatus)
 	}
 	return tss
 }

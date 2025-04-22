@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"context"
@@ -60,7 +60,7 @@ func (tr *TaskRepository) CreateTask(
 			Msg("Creating task error")
 	}
 
-	return mapDbTaskToTask(dbT), err
+	return MapDbTaskToTask(dbT), err
 }
 
 func (tr *TaskRepository) DeleteTask(ctx context.Context, id uuid.UUID) (err error) {
@@ -111,7 +111,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 			Msg("Updating task error")
 	}
 
-	return mapDbTaskToTask(dbT), err
+	return MapDbTaskToTask(dbT), err
 }
 func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (ts []domain.Task, err error) {
 	l := logger.FromContext(ctx)
@@ -126,14 +126,14 @@ func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (t
 			Msg("Getting tasks by userId error")
 	}
 
-	return mapDbTasksToTasks(dbTs), err
+	return MapDbTasksToTasks(dbTs), err
 }
 
 type GetTasksByUserIdParams struct {
 	UserID uuid.UUID `json:"user_id"`
 }
 
-func mapDbTaskToTask(dbT database.Task) (t domain.Task) {
+func MapDbTaskToTask(dbT database.Task) (t domain.Task) {
 	return domain.Task{
 		ID:               dbT.ID,
 		CreatedAt:        dbT.CreatedAt,
@@ -146,10 +146,10 @@ func mapDbTaskToTask(dbT database.Task) (t domain.Task) {
 	}
 }
 
-func mapDbTasksToTasks(dbTs []database.Task) (ts []domain.Task) {
+func MapDbTasksToTasks(dbTs []database.Task) (ts []domain.Task) {
 	ts = make([]domain.Task, len(dbTs))
 	for i, dbTask := range dbTs {
-		ts[i] = mapDbTaskToTask(dbTask)
+		ts[i] = MapDbTaskToTask(dbTask)
 	}
 	return ts
 }
