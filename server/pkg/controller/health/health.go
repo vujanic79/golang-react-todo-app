@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func HandleHealthCheck(w http.ResponseWriter, r *http.Request) {
+func HandleHealthCheck(w http.ResponseWriter, _ *http.Request) {
 	util.RespondWithJson(w, http.StatusOK, map[string]string{"status": "ok"})
 }
