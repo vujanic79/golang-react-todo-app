@@ -30,6 +30,7 @@ func (tsr *TaskStatusRepository) CreateTaskStatus(ctx context.Context, status st
 				Dict("params", zerolog.Dict().
 					Str("status", status))).
 			Msg("Creating task status error")
+		return domain.TaskStatus{}, err
 	}
 
 	return domain.TaskStatus{Status: dbStatus}, err
@@ -45,6 +46,7 @@ func (tsr *TaskStatusRepository) GetTaskStatuses(ctx context.Context) (tss []dom
 				Str("func", "GetTaskStatuses").
 				Dict("params", zerolog.Dict())).
 			Msg("Getting task statuses from database error")
+		return nil, err
 	}
 
 	return MapDbTaskStatusesToTaskStatuses(dbTss), err
@@ -61,6 +63,7 @@ func (tsr *TaskStatusRepository) GetTaskStatusByStatus(ctx context.Context, stat
 				Dict("params", zerolog.Dict().
 					Str("status", status))).
 			Msg("Getting task status from database error")
+		return domain.TaskStatus{}, err
 	}
 
 	return MapDbTaskStatusToTaskStatus(dbTs), err
