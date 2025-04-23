@@ -90,6 +90,7 @@ func TestGetTaskStatusByStatusPass(t *testing.T) {
 	}
 }
 
+// Trying to get non-existing task status: "ACTIVIE"
 func TestGetTaskStatusByStatusFail(t *testing.T) {
 	p := os.Getenv("PORT")
 
@@ -166,6 +167,7 @@ func TestCreateTaskStatusPass(t *testing.T) {
 	}
 }
 
+// Trying to create already existing status: "ACTIVE"
 func TestCreateTaskStatusFail(t *testing.T) {
 	p := os.Getenv("PORT")
 
