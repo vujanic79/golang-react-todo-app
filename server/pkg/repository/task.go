@@ -25,7 +25,7 @@ func NewTaskRepository(db *database.Queries) (ts *TaskRepository) {
 func (tr *TaskRepository) CreateTask(
 	ctx context.Context,
 	userId uuid.UUID,
-	params domain.CreateTaskParams) (task domain.Task, err error) {
+	params domain.CreateTaskParams) (t domain.Task, err error) {
 	l := logger.FromContext(ctx)
 	layout := "2006-01-02T15:04:05.999999Z"
 	parsedTime, err := time.Parse(layout, params.CompleteDeadline)
@@ -36,7 +36,7 @@ func (tr *TaskRepository) CreateTask(
 				Dict("params", zerolog.Dict().
 					Str("completeDeadline", params.CompleteDeadline))).
 			Msg("Parsing completeDeadline error")
-		return task, err
+		return domain.Task{}, err
 	}
 
 	dbT, err := tr.Db.CreateTask(ctx, database.CreateTaskParams{
@@ -58,6 +58,7 @@ func (tr *TaskRepository) CreateTask(
 					Interface("userId", userId).
 					Object("params", params))).
 			Msg("Creating task error")
+		return domain.Task{}, err
 	}
 
 	return MapDbTaskToTask(dbT), err
@@ -91,7 +92,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 				Dict("params", zerolog.Dict().
 					Str("completeDeadline", params.CompleteDeadline))).
 			Msg("Parsing completeDeadline error")
-		return t, err
+		return domain.Task{}, err
 	}
 
 	dbT, err := tr.Db.UpdateTask(ctx, database.UpdateTaskParams{
@@ -109,6 +110,7 @@ func (tr *TaskRepository) UpdateTask(ctx context.Context, params domain.UpdateTa
 				Dict("params", zerolog.Dict().
 					Object("params", params))).
 			Msg("Updating task error")
+		return domain.Task{}, err
 	}
 
 	return MapDbTaskToTask(dbT), err
@@ -124,6 +126,7 @@ func (tr *TaskRepository) GetTasksByUserId(ctx context.Context, id uuid.UUID) (t
 				Dict("params", zerolog.Dict().
 					Interface("userId", id))).
 			Msg("Getting tasks by userId error")
+		return nil, err
 	}
 
 	return MapDbTasksToTasks(dbTs), err

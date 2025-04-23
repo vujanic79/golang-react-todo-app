@@ -99,7 +99,7 @@ func (tsc *TaskStatusController) GetTaskStatusByStatus(w http.ResponseWriter, r 
 
 	ts, err := tsc.Tss.GetTaskStatusByStatus(ctx, status)
 	if err != nil {
-		util.RespondWithError(w, http.StatusInternalServerError, "Error getting task status")
+		util.RespondWithError(w, http.StatusInternalServerError, "Getting task status error")
 		return
 	}
 

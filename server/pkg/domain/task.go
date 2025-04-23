@@ -57,7 +57,7 @@ func (utp UpdateTaskParams) MarshalZerologObject(e *zerolog.Event) {
 }
 
 type GetTasksByUserIdParams struct {
-	UserID uuid.UUID
+	UserID uuid.UUID `json:"userId"`
 }
 
 type TaskService interface {

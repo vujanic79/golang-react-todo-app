@@ -21,6 +21,6 @@ func TestHealthRoute(t *testing.T) {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		t.Errorf("Expected status 200, got %d", res.StatusCode)
+		t.Errorf("Expected status: %d, actual: %d", http.StatusOK, res.StatusCode)
 	}
 }

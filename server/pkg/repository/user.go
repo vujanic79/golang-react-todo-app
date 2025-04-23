@@ -38,6 +38,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, params domain.CreateUs
 				Str("func", "CreateUser").
 				Object("params", params)).
 			Msg("Creating user error")
+		return domain.User{}, err
 	}
 
 	return MapDbUserToUser(dbU), err
@@ -54,6 +55,7 @@ func (ur *UserRepository) GetUserIdByEmail(ctx context.Context, email string) (i
 				Dict("params", zerolog.Dict().
 					Str("email", email))).
 			Msg("Getting user id by email error")
+		return uuid.Nil, err
 	}
 
 	return id, err
