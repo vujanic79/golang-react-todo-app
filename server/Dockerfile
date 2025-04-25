@@ -17,10 +17,29 @@ FROM base AS development
 
 WORKDIR /app/cmd/web
 
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
-
-RUN go build -gcflags="all=-N -l" -o /app/bin/golang-react-todo-app
+RUN go build -o /app/bin/golang-react-todo-app
 
 WORKDIR /app
 
-EXPOSE 8000 40000
+EXPOSE 8000
+
+# ------------------------------
+# Builder image for production
+# ------------------------------
+FROM base AS builder
+
+WORKDIR /app/cmd/web
+
+RUN CGO_ENABLED=0 go build -o /app/bin/golang-react-todo-app
+
+# ------------------------------
+# Final production image
+# ------------------------------
+FROM scratch AS production
+
+WORKDIR /app
+
+COPY --from=builder /app/bin/golang-react-todo-app ./bin/golang-react-todo-app
+COPY pkg/repository/data/ ./pkg/repository/data/
+
+EXPOSE 8000
