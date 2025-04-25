@@ -199,7 +199,7 @@ func TestCreateTaskPass(t *testing.T) {
 	}
 }
 
-// Creating task with non-existing user email: somebody@email.com
+// Trying to create task for non-existing user email: somebody@email.com
 func TestCreateTaskFail(t *testing.T) {
 	p := os.Getenv("PORT")
 
@@ -230,6 +230,117 @@ func TestCreateTaskFail(t *testing.T) {
 	res, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("Executing POST request error: %v", err)
+	}
+
+	defer func(body io.ReadCloser) {
+		err := body.Close()
+		if err != nil {
+			t.Errorf("Closing response body error: %v", err)
+		}
+	}(res.Body)
+
+	if http.StatusInternalServerError != res.StatusCode {
+		t.Errorf("Expected status: %d, actual: %d", http.StatusInternalServerError, res.StatusCode)
+	}
+}
+
+func TestUpdateTaskPass(t *testing.T) {
+	p := os.Getenv("PORT")
+
+	idStr := "012d38ae-f234-46f8-bea8-4a3f43b0abb0"
+	completeDeadline := time.Now().UTC().Add(7 * 24 * time.Hour).Format("2006-01-02T15:04:05.999999Z")
+	body := domain.UpdateTaskParams{
+		Title:            "Task 001 updated",
+		Description:      "Task 001 description updated",
+		Status:           "PAUSED",
+		CompleteDeadline: completeDeadline,
+	}
+
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("Could not marshal body: %v", err)
+	}
+
+	req, err := http.NewRequest("PUT",
+		fmt.Sprintf("http://127.0.0.1:%s/todo/tasks/%s", p, idStr),
+		bytes.NewBuffer(jsonBody))
+	if err != nil {
+		t.Fatalf("Creating PUT request error: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Executing PUT request error: %v", err)
+	}
+
+	defer func(body io.ReadCloser) {
+		err := body.Close()
+		if err != nil {
+			t.Errorf("Closing response body error: %v", err)
+		}
+	}(res.Body)
+
+	if http.StatusOK != res.StatusCode {
+		t.Errorf("Expected status: %d, actual: %d", http.StatusOK, res.StatusCode)
+	}
+
+	decoder := json.NewDecoder(res.Body)
+	var actual domain.Task
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("Decoding response body error: %v", err)
+	}
+
+	var expected = domain.Task{
+		ID:               actual.ID,
+		CreatedAt:        time.Now().UTC(),
+		UpdatedAt:        time.Now().UTC(),
+		Title:            "Task 001 updated",
+		Description:      "Task 001 description updated",
+		Status:           "PAUSED",
+		CompleteDeadline: time.Now().UTC().Add(7 * 24 * time.Hour),
+		UserID:           actual.UserID,
+	}
+
+	if !areTasksEqual(expected, actual) {
+		t.Errorf("Response body content error, expected: %s, actual: %s", expected, actual)
+	}
+}
+
+// Trying to update non-existing task, with taskId: 012d38ae-f234-46f8-bea8-4a3f43b0abb1
+func TestUpdateTaskFail(t *testing.T) {
+	p := os.Getenv("PORT")
+
+	idStr := "012d38ae-f234-46f8-bea8-4a3f43b0abb1"
+	completeDeadline := time.Now().UTC().Add(7 * 24 * time.Hour).Format("2006-01-02T15:04:05.999999Z")
+	body := domain.UpdateTaskParams{
+		Title:            "Task 001 updated twice",
+		Description:      "Task 001 description updated twice",
+		Status:           "ACTIVE",
+		CompleteDeadline: completeDeadline,
+	}
+
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("Could not marshal body: %v", err)
+	}
+
+	req, err := http.NewRequest("PUT",
+		fmt.Sprintf("http://127.0.0.1:%s/todo/tasks/%s", p, idStr),
+		bytes.NewBuffer(jsonBody))
+	if err != nil {
+		t.Fatalf("Creating PUT request error: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Executing PUT request error: %v", err)
 	}
 
 	defer func(body io.ReadCloser) {

@@ -118,8 +118,8 @@ func TestGetTaskStatusByStatusFail(t *testing.T) {
 func TestCreateTaskStatusPass(t *testing.T) {
 	p := os.Getenv("PORT")
 
-	body := map[string]string{
-		"status": "ACTIVIE",
+	body := domain.CreateTaskStatusParams{
+		Status: "ACTIVIE",
 	}
 
 	jsonBody, err := json.Marshal(body)
@@ -171,8 +171,8 @@ func TestCreateTaskStatusPass(t *testing.T) {
 func TestCreateTaskStatusFail(t *testing.T) {
 	p := os.Getenv("PORT")
 
-	body := map[string]string{
-		"status": "ACTIVE",
+	body := domain.CreateTaskStatusParams{
+		Status: "ACTIVE",
 	}
 
 	jsonBody, err := json.Marshal(body)
