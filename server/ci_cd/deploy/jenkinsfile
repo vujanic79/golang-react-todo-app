@@ -5,11 +5,10 @@ pipeline {
         stage('Verify Deploy Job') {
             steps {
                 script {
-                    echo "Job Name: $jobName"
-                    echo "Build Number: $buildNumber"
+                    echo "Job Name: ${env.JOB_NAME}"
+                    echo "Build Number: ${env.BUILD_NUMBER}"
                 }
             }
         }
     }
-//     test comment
 }
