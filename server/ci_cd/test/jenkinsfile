@@ -31,7 +31,6 @@ pipeline {
         }
 
         stage('Run Tests') {
-//         Test comment
             steps {
                 sh 'chmod +x server/ci_cd/test/scripts/001_run_tests.sh && server/ci_cd/test/scripts/001_run_tests.sh'
             }
