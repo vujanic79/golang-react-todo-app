@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Verify Shell Environment') {
+            steps {
+                script {
+                    echo "Job Name: $jobName"
+                    echo "Build Number: $buildNumber"
+                }
+            }
+        }
+    }
+}
