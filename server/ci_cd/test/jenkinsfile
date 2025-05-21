@@ -31,7 +31,9 @@ pipeline {
         }
 
         stage('Run Tests') {
-            sh 'chmod +x server/ci_cd/test/scripts/001_run_tests.sh && server/ci_cd/test/scripts/001_run_tests.sh'
+            steps {
+                sh 'chmod +x server/ci_cd/test/scripts/001_run_tests.sh && server/ci_cd/test/scripts/001_run_tests.sh'
+            }
         }
     }
 }
