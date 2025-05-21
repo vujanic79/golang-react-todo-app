@@ -31,10 +31,7 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                sh 'chmod +x server/ci_cd/test/scripts/001_run_tests.sh && server/ci_cd/test/scripts/001_run_tests.sh'
-                junit 'server/report.xml'
-            }
+            sh 'chmod +x server/ci_cd/test/scripts/001_run_tests.sh && server/ci_cd/test/scripts/001_run_tests.sh'
         }
     }
 }
