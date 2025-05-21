@@ -44,7 +44,7 @@ pipeline {
     post {
         success {
             echo "Tests passed. Triggering ${DEPLOY_JOB}."
-            build job: "${DEPLOY_JOB}"
+            build job: "${DEPLOY_JOB}", propagate: false
         }
         failure {
             echo "Tests failed. Skipping ${DEPLOY_JOB}."

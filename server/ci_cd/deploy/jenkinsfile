@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Verify Shell Environment') {
+        stage('Verify Deploy Job') {
             steps {
                 script {
                     echo "Job Name: $jobName"
