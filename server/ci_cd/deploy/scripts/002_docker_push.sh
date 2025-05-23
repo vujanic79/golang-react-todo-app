@@ -6,4 +6,4 @@ else
     docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
 fi
 
-docker-compose -f ../../../docker-compose.yaml push
+docker-compose -f server/docker-compose.yaml push
