@@ -63,7 +63,7 @@ pipeline {
             steps {
                 echo 'Deploying application using docker-compose...'
                 sh "docker-compose -f server/docker-compose.yaml pull"
-                sh "docker-compose -f server/docker-compose.yaml up -d"
+                sh "docker-compose -f server/docker-compose.yaml up -d --remove-orphans"
             }
         }
     }
