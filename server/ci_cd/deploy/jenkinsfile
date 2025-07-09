@@ -70,11 +70,8 @@ pipeline {
 
     post {
         always {
+            sh 'rm -f .env'
             sh 'docker logout'
-            dir('server') {
-                sh 'docker-compose down'
-                sh 'rm -f .env'
-            }
         }
     }
 }
