@@ -2,6 +2,40 @@ pipeline {
     agent any
 
     stages {
+        stage('Prepare .env File') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'HOST', variable: 'HOST'),
+                    string(credentialsId: 'PORT', variable: 'PORT'),
+                    string(credentialsId: 'DB_DRIVER', variable: 'DB_DRIVER'),
+                    string(credentialsId: 'DB_USER', variable: 'DB_USER'),
+                    string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                    string(credentialsId: 'DB_HOST', variable: 'DB_HOST'),
+                    string(credentialsId: 'DB_PORT', variable: 'DB_PORT'),
+                    string(credentialsId: 'DB_NAME', variable: 'DB_NAME'),
+                    string(credentialsId: 'DB_SSL_MODE', variable: 'DB_SSL_MODE'),
+                    string(credentialsId: 'APP_ENV', variable: 'APP_ENV'),
+                    string(credentialsId: 'LOG_LEVEL', variable: 'LOG_LEVEL')
+                ]) {
+                    sh '''
+                        cat <<EOF > server/.env
+                        HOST=${HOST}
+                        PORT=${PORT}
+                        DB_DRIVER=${DB_DRIVER}
+                        DB_USER=${DB_USER}
+                        DB_PASSWORD=${DB_PASSWORD}
+                        DB_HOST=${DB_HOST}
+                        DB_PORT=${DB_PORT}
+                        DB_NAME=${DB_NAME}
+                        DB_SSL_MODE=${DB_SSL_MODE}
+                        APP_ENV=${APP_ENV}
+                        LOG_LEVEL=${LOG_LEVEL}
+                        EOF
+                    '''
+                }
+            }
+        }
+
         stage('Build Image') {
             steps {
                 sh "chmod +x server/ci_cd/deploy/scripts/001_docker_build.sh"
